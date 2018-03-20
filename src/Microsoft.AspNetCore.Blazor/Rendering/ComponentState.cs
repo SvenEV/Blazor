@@ -58,6 +58,16 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
                 _renderTreeBuilderPrevious.GetFrames(),
                 _renderTreeBuilderCurrent.GetFrames());
             batchBuilder.UpdatedComponentDiffs.Append(diff);
+
+            // Sven:
+            Console.WriteLine($"RenderIntoBatch({_component.GetType().Name} {_component.ToString()})");
+            ArrayRange<RenderTreeFrame> frames = _renderTreeBuilderCurrent.GetFrames();
+            var rootChildren = SvensComponentExtensions.DetermineChildrenInTree(frames.Array, frames.Count);
+            _component.SetChildren(rootChildren);
+
+            Console.WriteLine($@"    found {rootChildren.Count} children
+    {frames.Count} frames:
+        {string.Join("\r\n        ", frames)}");
         }
 
         public void DisposeInBatch(RenderBatchBuilder batchBuilder)
