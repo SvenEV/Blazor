@@ -1,0 +1,25 @@
+﻿@inherits UIElement
+
+<div style="@LayoutCss background-color: @Background">
+    Box
+</div>
+
+@functions{
+
+    public string Background { get; set; } = "blue";
+
+    public BoxView()
+    {
+        Width = Height = 100;
+    }
+
+    protected override Point MeasureOverride(Point availableSize)
+    {
+        return new Point(Width, Height);
+    }
+
+    protected override Point ArrangeOverride(Point finalSize)
+    {
+        return finalSize;
+    }
+}

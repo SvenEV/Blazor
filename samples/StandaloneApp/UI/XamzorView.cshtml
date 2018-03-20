@@ -1,0 +1,27 @@
+﻿@inherits StandaloneApp.UI.UIElement
+
+<div style="position: relative; overflow: hidden; width: @(Width)px; height: @(Height)px; border: 1px solid black;">
+    @ChildContent
+</div>
+
+<button onclick="Layout">Run Layout</button>
+
+@functions{
+
+    public static XamzorView Current { get; set; }
+
+    public XamzorView()
+    {
+        Current = this;
+        Width = 800;
+        Height = 600;
+    }
+
+    public void Layout()
+    {
+        Console.WriteLine("LAYOUT STARTING");
+        Measure(new Point(Width, Height));
+        Arrange(new Rect(0, 0, Width, Height));
+        Console.WriteLine("LAYOUT FINISHED");
+    }
+}
