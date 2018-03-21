@@ -12,74 +12,85 @@
 
     protected override Point MeasureOverride(Point availableSize)
     {
-        var childAvailableSize = (Orientation == Orientation.Vertical)
-            ? new Point(
+        return (Orientation == Orientation.Vertical)
+            ? MeasureVertically()
+            : MeasureHorizontally();
+
+        Point MeasureVertically()
+        {
+            var childAvailableSize = new Point(
                 Clamp(Width.OrIfNan(availableSize.X), MinSize.X, MaxSize.X),
-                double.PositiveInfinity)
-            : new Point(
+                double.PositiveInfinity);
+
+            var measuredSize = Point.Zero;
+
+            foreach (var child in Children)
+            {
+                child.Measure(childAvailableSize);
+                measuredSize = new Point(
+                    Max(measuredSize.X, child.DesiredSize.X),
+                    measuredSize.Y + child.DesiredSize.Y + Spacing);
+            }
+
+            return measuredSize - new Point(0, Spacing);
+        }
+
+        Point MeasureHorizontally()
+        {
+            var childAvailableSize = new Point(
                 double.PositiveInfinity,
                 Clamp(Height.OrIfNan(availableSize.Y), MinSize.Y, MaxSize.Y));
 
-        var measuredSize = Point.Zero;
+            var measuredSize = Point.Zero;
 
-        foreach (var child in Children)
-        {
-            child.Measure(childAvailableSize);
-            var size = child.DesiredSize;
+            foreach (var child in Children)
+            {
+                child.Measure(childAvailableSize);
+                measuredSize = new Point(
+                    measuredSize.X + child.DesiredSize.X + Spacing,
+                    Max(measuredSize.Y, child.DesiredSize.Y));
+            }
 
-            if (Orientation == Orientation.Vertical)
-            {
-                measuredSize = new Point(
-                    Max(measuredSize.X, size.X),
-                    measuredSize.Y + size.Y + Spacing);
-            }
-            else
-            {
-                measuredSize = new Point(
-                    measuredSize.X + size.X + Spacing,
-                    Max(measuredSize.Y, size.Y));
-            }
+            return measuredSize - new Point(Spacing, 0);
         }
-
-        measuredSize -= (Orientation == Orientation.Vertical)
-            ? new Point(0, Spacing)
-            : new Point(Spacing, 0);
-
-        return measuredSize;
     }
 
     protected override Point ArrangeOverride(Point finalSize)
     {
-        var arrangedSize = (Orientation == Orientation.Vertical)
-            ? new Point(finalSize.X, 0)
-            : new Point(0, finalSize.Y);
+        return (Orientation == Orientation.Vertical)
+            ? ArrangeVertically()
+            : ArrangeHorizontally();
 
-        foreach (var child in Children)
+        Point ArrangeVertically()
         {
-            var childSize = child.DesiredSize;
+            var arrangedSize = new Point(finalSize.X, 0);
 
-            if (Orientation == Orientation.Vertical)
+            foreach (var child in Children)
             {
-                var childFinal = new Rect(0, arrangedSize.Y, Max(childSize.X, arrangedSize.X), childSize.Y);
-                child.Arrange(childFinal);
+                var childSize = child.DesiredSize;
+                child.Arrange(new Rect(0, arrangedSize.Y, Max(childSize.X, arrangedSize.X), childSize.Y));
                 arrangedSize = new Point(
                     Max(arrangedSize.X, childSize.X),
                     arrangedSize.Y + childSize.Y + Spacing);
             }
-            else
+
+            return new Point(arrangedSize.X, Max(arrangedSize.Y - Spacing, finalSize.Y));
+        }
+
+        Point ArrangeHorizontally()
+        {
+            var arrangedSize = new Point(0, finalSize.Y);
+
+            foreach (var child in Children)
             {
-                var childFinal = new Rect(arrangedSize.X, 0, childSize.X, Max(childSize.Y, arrangedSize.Y));
-                child.Arrange(childFinal);
+                var childSize = child.DesiredSize;
+                child.Arrange(new Rect(arrangedSize.X, 0, childSize.X, Max(childSize.Y, arrangedSize.Y)));
                 arrangedSize = new Point(
                     arrangedSize.X + childSize.X + Spacing,
                     Max(arrangedSize.Y, childSize.Y));
             }
+
+            return new Point(Max(arrangedSize.X - Spacing, finalSize.X), arrangedSize.Y);
         }
-
-        arrangedSize = (Orientation == Orientation.Vertical)
-            ? new Point(arrangedSize.X, Max(arrangedSize.Y - Spacing, finalSize.Y))
-            : new Point(Max(arrangedSize.X - Spacing, finalSize.X), arrangedSize.Y);
-
-        return arrangedSize;
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Components;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using static System.Math;
 
 namespace StandaloneApp.UI
@@ -37,23 +37,43 @@ namespace StandaloneApp.UI
         {
             this.SetChildrenChangedHandler(_ => XamzorView.Current?.Layout());
         }
-        
+
         public void Measure(Point availableSize)
         {
-            if (double.IsNaN(availableSize.X) || double.IsNaN(availableSize.Y))
-                throw new ArgumentException("NaN is invalid for Measure", nameof(availableSize));
+            if (IsInvalidInput(availableSize))
+                throw new LayoutException($"Invalid input for '{GetType().Name}.Measure': {availableSize}");
 
             DesiredSize = Point.Min(MeasureCore(availableSize), availableSize);
-            StateHasChanged();
+
+            if (IsInvalidOutput(DesiredSize))
+                throw new LayoutException($"Invalid result from '{GetType().Name}.Measure({availableSize})': {DesiredSize}");
+
+            // Available size must not be NaN (but can be infinity)
+            bool IsInvalidInput(Point size) =>
+                double.IsNaN(size.X) || double.IsNaN(size.Y);
+
+            // Desired size must be >=0 (not NaN and not infinity)
+            bool IsInvalidOutput(Point size) =>
+                size.X < 0 || size.Y < 0 ||
+                double.IsInfinity(size.X) || double.IsInfinity(size.Y) ||
+                double.IsNaN(size.X) || double.IsNaN(size.Y);
         }
 
         public void Arrange(Rect finalRect)
         {
-            if (IsInvalidRect(finalRect))
-                throw new ArgumentException($"Invalid Arrange rectangle: {finalRect}", nameof(finalRect));
+            if (IsInvalidInput(finalRect))
+                throw new LayoutException($"Invalid input for '{GetType().Name}.Arrange': {finalRect}");
 
-            ArrangeCore(finalRect);
+            Bounds = ArrangeCore(finalRect);
             StateHasChanged();
+
+            // Position and size must not be NaN or infinity, and size must be >=0
+            bool IsInvalidInput(Rect rect) =>
+                rect.Width < 0 || rect.Height < 0 ||
+                double.IsInfinity(rect.X) || double.IsInfinity(rect.Y) ||
+                double.IsInfinity(rect.Width) || double.IsInfinity(rect.Height) ||
+                double.IsNaN(rect.X) || double.IsNaN(rect.Y) ||
+                double.IsNaN(rect.Width) || double.IsNaN(rect.Height);
         }
 
         private Point MeasureCore(Point availableSize)
@@ -69,20 +89,20 @@ namespace StandaloneApp.UI
             return Point.Max(Point.Zero, measuredSize + Margin.Size);
         }
 
-        private void ArrangeCore(Rect finalRect)
+        private Rect ArrangeCore(Rect finalRect)
         {
-            var origin = finalRect.TopLeft + new Point(Margin.Left, Margin.Top);
             var availableSizeMinusMargins = Point.Max(Point.Zero, finalRect.Size - Margin.Size);
-            var size = availableSizeMinusMargins;
 
-            if (HorizontalAlignment != Alignment.Stretch)
-                size = size.WithX(Min(size.X, DesiredSize.X - Margin.HorizontalThickness));
-
-            if (VerticalAlignment != Alignment.Stretch)
-                size = size.WithY(Min(size.Y, DesiredSize.Y - Margin.VerticalThickness));
+            // Calculate used size
+            var size = new Point(
+                HorizontalAlignment == Alignment.Stretch ? availableSizeMinusMargins.X : Min(availableSizeMinusMargins.X, DesiredSize.X - Margin.HorizontalThickness),
+                VerticalAlignment == Alignment.Stretch ? availableSizeMinusMargins.Y : Min(availableSizeMinusMargins.Y, DesiredSize.Y - Margin.VerticalThickness));
 
             size = Point.Clamp(size, MinSize, MaxSize);
             size = Point.Min(ArrangeOverride(size), size);
+
+            // Calculate offset
+            var origin = finalRect.TopLeft + new Point(Margin.Left, Margin.Top);
 
             switch (HorizontalAlignment)
             {
@@ -108,18 +128,12 @@ namespace StandaloneApp.UI
                     break;
             }
 
-            Bounds = new Rect(origin, size);
+            return new Rect(origin, size);
         }
-
-        private bool IsInvalidRect(Rect rect) => 
-            rect.Width < 0 || rect.Height < 0 ||
-            double.IsInfinity(rect.X) || double.IsInfinity(rect.Y) ||
-            double.IsInfinity(rect.Width) || double.IsInfinity(rect.Height) ||
-            double.IsNaN(rect.X) || double.IsNaN(rect.Y) ||
-            double.IsNaN(rect.Width) || double.IsNaN(rect.Height);
 
         protected virtual Point MeasureOverride(Point availableSize)
         {
+            // By default: Return bounding box size of all children positioned at (0, 0)
             var size = Point.Zero;
 
             foreach (var child in Children)
@@ -133,15 +147,11 @@ namespace StandaloneApp.UI
 
         protected virtual Point ArrangeOverride(Point finalSize)
         {
+            // By default: Position all children at (0, 0)
             foreach (var child in Children)
                 child.Arrange(new Rect(Point.Zero, finalSize));
 
             return finalSize;
         }
-    }
-
-    public class LayoutProps
-    {
-        
     }
 }
