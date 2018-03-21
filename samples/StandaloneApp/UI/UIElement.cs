@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Blazor.Components;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using static System.Math;
 
 namespace StandaloneApp.UI
@@ -17,15 +16,25 @@ namespace StandaloneApp.UI
 
         public double Height { get; set; } = double.NaN;
 
+        public double MinWidth { get; set; } = 0;
+
+        public double MinHeight { get; set; } = 0;
+
+        public double MaxWidth { get; set; } = double.PositiveInfinity;
+
+        public double MaxHeight { get; set; } = double.PositiveInfinity;
+
+        public Point Size => new Point(Width, Height);
+
+        public Point MinSize => new Point(MinWidth, MinHeight);
+
+        public Point MaxSize => new Point(MaxWidth, MaxHeight);
+
         public Thickness Margin { get; set; } = Thickness.Zero;
 
         public Alignment HorizontalAlignment { get; set; } = Alignment.Stretch;
 
         public Alignment VerticalAlignment { get; set; } = Alignment.Stretch;
-
-        public Point MinSize { get; set; } = Point.Zero;
-
-        public Point MaxSize { get; set; } = Point.PositiveInfinity;
 
         public Point DesiredSize { get; private set; } // includes margins, computed by Measure()
 
@@ -83,13 +92,8 @@ namespace StandaloneApp.UI
         {
             var constrainedSize = Point.Clamp(availableSize - Margin.Size, MinSize, MaxSize);
             var measuredSize = MeasureOverride(constrainedSize);
-
-            measuredSize = new Point(
-                Width.OrIfNan(measuredSize.X),
-                Height.OrIfNan(measuredSize.Y));
-
-            measuredSize = Point.Clamp(measuredSize, MinSize, MaxSize);
-            return Point.Max(Point.Zero, measuredSize + Margin.Size);
+            var desiredSize = Point.Clamp(Size.OrWhereNaN(measuredSize), MinSize, MaxSize);
+            return Point.Max(Point.Zero, desiredSize + Margin.Size);
         }
 
         private Rect ArrangeCore(Rect finalRect)
@@ -107,8 +111,8 @@ namespace StandaloneApp.UI
                     VerticalAlignment == Alignment.Stretch ? availableSizeMinusMargins.Y : Min(availableSizeMinusMargins.Y, DesiredSize.Y - Margin.VerticalThickness));
 
                 // Effective min/max size accounts for explicitly set Width/Height
-                var effectiveMinSize = Point.Clamp(new Point(Width.OrIfNan(0), Height.OrIfNan(0)), MinSize, MaxSize);
-                var effectiveMaxSize = Point.Clamp(new Point(Width.OrIfNan(double.PositiveInfinity), Height.OrIfNan(double.PositiveInfinity)), MinSize, MaxSize);
+                var effectiveMinSize = Point.Clamp(Size.OrWhereNaN(Point.Zero), MinSize, MaxSize);
+                var effectiveMaxSize = Point.Clamp(Size.OrWhereNaN(Point.PositiveInfinity), MinSize, MaxSize);
                 size = Point.Clamp(size, effectiveMinSize, effectiveMaxSize);
 
                 size = Point.Min(ArrangeOverride(size), size);

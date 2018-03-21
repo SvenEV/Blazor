@@ -21,6 +21,8 @@ namespace StandaloneApp.UI
 
         public Point WithX(double x) => new Point(x, Y);
         public Point WithY(double y) => new Point(X, y);
+        public Point OrWhereNaN(Point fallbackValue) =>
+            new Point(X.OrIfNan(fallbackValue.X), Y.OrIfNan(fallbackValue.Y));
 
         public static Point operator +(Point a, Point b) => new Point(a.X + b.X, a.Y + b.Y);
         public static Point operator -(Point a, Point b) => a + -b;

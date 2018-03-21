@@ -19,7 +19,7 @@
         Point MeasureVertically()
         {
             var childAvailableSize = new Point(
-                Clamp(Width.OrIfNan(availableSize.X), MinSize.X, MaxSize.X),
+                Clamp(Width.OrIfNan(availableSize.X), MinWidth, MaxWidth),
                 double.PositiveInfinity);
 
             var measuredSize = Point.Zero;
@@ -39,7 +39,7 @@
         {
             var childAvailableSize = new Point(
                 double.PositiveInfinity,
-                Clamp(Height.OrIfNan(availableSize.Y), MinSize.Y, MaxSize.Y));
+                Clamp(Height.OrIfNan(availableSize.Y), MinHeight, MaxHeight));
 
             var measuredSize = Point.Zero;
 

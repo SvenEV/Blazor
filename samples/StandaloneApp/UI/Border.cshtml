@@ -3,6 +3,7 @@
 <div style="@LayoutCss">
 
     <div style="width: @(Bounds.Width)px; height: @(Bounds.Height)px;
+         background-color: @BackgroundColor;
          border-color: @BorderColor; border-style: solid;
          border-width: @(BorderThickness.Top)px @(BorderThickness.Right)px @(BorderThickness.Bottom)px @(BorderThickness.Left)px;
          border-radius: @(CornerRadius.Top)px @(CornerRadius.Right)px @(CornerRadius.Bottom)px @(CornerRadius.Left)px;">
@@ -17,9 +18,11 @@
 
     public Thickness BorderThickness { get; set; } = Thickness.Zero;
 
-    public string BorderColor { get; set; } = "none";
-
     public Thickness CornerRadius { get; set; } = Thickness.Zero;
+
+    public string BackgroundColor { get; set; } = "none";
+
+    public string BorderColor { get; set; } = "none";
 
     protected override Point MeasureOverride(Point availableSize)
     {
