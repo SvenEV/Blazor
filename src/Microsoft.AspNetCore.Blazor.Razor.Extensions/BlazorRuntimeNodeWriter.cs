@@ -470,7 +470,15 @@ namespace Microsoft.AspNetCore.Blazor.Razor
             }
             else if ((cSharpNode = node.Children[0] as CSharpExpressionIntermediateNode) != null)
             {
-                context.CodeWriter.Write(((IntermediateToken)cSharpNode.Children[0]).Content);
+                // Sven:
+                // (1) Add an explicit cast to the property type
+                // (2) Add parentheses to the attribute value
+                //
+                // This allows us to do things like:
+                //       <Border Margin="10,0">...
+                //  -->  'builder.AddAttribute(17, "Margin", (Thickness)(10, 0))'
+                context.CodeWriter.Write("(" + node.BoundAttribute.TypeName + ")");
+                context.CodeWriter.Write("(" + ((IntermediateToken)cSharpNode.Children[0]).Content + ")");
             }
             else if ((htmlNode = node.Children[0] as HtmlContentIntermediateNode) != null)
             {
@@ -480,7 +488,16 @@ namespace Microsoft.AspNetCore.Blazor.Razor
             else if (node.Children[0] is IntermediateToken token)
             {
                 // This is what we expect for non-string nodes.
-                context.CodeWriter.Write(((IntermediateToken)node.Children[0]).Content);
+        
+                // Sven:
+                // (1) Add an explicit cast to the property type
+                // (2) Add parentheses to the attribute value
+                //
+                // This allows us to do things like:
+                //       <Border Margin="10,0">...
+                //  -->  'builder.AddAttribute(17, "Margin", (Thickness)(10, 0))'
+                context.CodeWriter.Write("(" + node.BoundAttribute.TypeName + ")");
+                context.CodeWriter.Write("(" + ((IntermediateToken)node.Children[0]).Content + ")");
             }
             else
             {

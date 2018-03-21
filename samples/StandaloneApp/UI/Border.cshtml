@@ -3,8 +3,8 @@
 <div style="@LayoutCss">
 
     <div style="width: @(Bounds.Width)px; height: @(Bounds.Height)px;
-         background-color: @BackgroundColor;
-         border-color: @BorderColor; border-style: solid;
+         background-color: @Background;
+         border-color: @BorderBrush; border-style: solid;
          border-width: @(BorderThickness.Top)px @(BorderThickness.Right)px @(BorderThickness.Bottom)px @(BorderThickness.Left)px;
          border-radius: @(CornerRadius.Top)px @(CornerRadius.Right)px @(CornerRadius.Bottom)px @(CornerRadius.Left)px;">
     </div>
@@ -20,9 +20,9 @@
 
     public Thickness CornerRadius { get; set; } = Thickness.Zero;
 
-    public string BackgroundColor { get; set; } = "none";
+    public string Background { get; set; } = "none";
 
-    public string BorderColor { get; set; } = "none";
+    public string BorderBrush { get; set; } = "none";
 
     protected override Point MeasureOverride(Point availableSize)
     {

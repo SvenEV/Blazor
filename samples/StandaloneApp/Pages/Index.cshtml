@@ -4,7 +4,32 @@
 
 Welcome to your new app.
 
-@*<Foo Tag="A">
+<XamzorView>
+
+    <StackPanel>
+
+        <Border Background="Red" Width="200" Height="40" />
+        <Border Background="DarkRed" MaxWidth="300" Height="40" Margin="350,10" />
+        <Border Background="DarkRed" MaxWidth="300" Height="40" />
+        <Border Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Left" />
+        <Border Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Center" />
+        <Border Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Right" />
+
+        <Border BorderBrush="DarkGreen" BorderThickness="10" Padding="10" CornerRadius="20"
+                HorizontalAlignment="Stretch" Width="400">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                <Border Width="50" Height="50" Background="Green" />
+                <Border Width="50" Height="50" Background="Green" />
+                <Border Width="50" Height="50" Background="Green" />
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+
+</XamzorView>
+
+@*
+    <Foo Tag="A">
         <Foo Tag="A1">
             <Foo Tag="A1x"></Foo>
             <Foo Tag="A1y"></Foo>
@@ -18,28 +43,5 @@ Welcome to your new app.
             <Foo Tag="A3x" />
             <Foo Tag="A3y" />
         </Foo>
-    </Foo>*@
-
-<XamzorView>
-
-    <StackPanel>
-
-        <Border BackgroundColor="Red" Width="200" Height="40" />
-        <Border BackgroundColor="DarkRed" MaxWidth="300" Height="40" Margin="@Thickness(350, 10)" />
-        <Border BackgroundColor="DarkRed" MaxWidth="300" Height="40" />
-        <Border BackgroundColor="DarkRed" Width="200" Height="40" HorizontalAlignment="@Alignment.Start" />
-        <Border BackgroundColor="DarkRed" Width="200" Height="40" HorizontalAlignment="@Alignment.Center" />
-        <Border BackgroundColor="DarkRed" Width="200" Height="40" HorizontalAlignment="@Alignment.End" />
-
-        <Border BorderColor="DarkGreen" BorderThickness="@Thickness(10)" Padding="@Thickness(10)" CornerRadius="@Thickness(20)"
-                HorizontalAlignment="@Alignment.Stretch" Width="400">
-            <StackPanel Orientation="@Orientation.Horizontal" HorizontalAlignment="@Alignment.Center" Spacing="10">
-                <Border Width="50" Height="50" BackgroundColor="Green" />
-                <Border Width="50" Height="50" BackgroundColor="Green" />
-                <Border Width="50" Height="50" BackgroundColor="Green" />
-            </StackPanel>
-        </Border>
-
-    </StackPanel>
-
-</XamzorView>
+    </Foo>
+*@

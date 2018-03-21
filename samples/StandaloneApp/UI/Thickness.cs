@@ -38,6 +38,12 @@
             Bottom = bottom;
         }
 
+        public static implicit operator Thickness(double uniformSize) =>
+            new Thickness(uniformSize);
+
+        public static implicit operator Thickness((double horizontalSize, double verticalSize) t) =>
+            new Thickness(t.horizontalSize, t.verticalSize);
+
         public static implicit operator Thickness((double left, double top, double right, double bottom) t) =>
             new Thickness(t.left, t.top, t.right, t.bottom);
 
