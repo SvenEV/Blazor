@@ -22,7 +22,7 @@
         public Rect(Point topLeft, Point size) : this(topLeft.X, topLeft.Y, size.X, size.Y)
         {
         }
-
+        
         public override string ToString() => $"({X}, {Y}, {Width}, {Height})";
     }
 }

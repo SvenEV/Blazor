@@ -16,6 +16,8 @@
 
         public double VerticalThickness => Top + Bottom;
 
+        public Point TopLeft => new Point(Left, Top);
+
         public Point Size => new Point(Left + Right, Top + Bottom);
 
         internal bool IsDefault => Left == 0 && Top == 0 && Right == 0 && Bottom == 0;

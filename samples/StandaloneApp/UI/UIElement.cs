@@ -27,9 +27,9 @@ namespace StandaloneApp.UI
 
         public Point MaxSize { get; set; } = Point.PositiveInfinity;
 
-        public Point DesiredSize { get; private set; }
+        public Point DesiredSize { get; private set; } // excluding margins
 
-        public Rect Bounds { get; private set; }
+        public Rect Bounds { get; private set; } // size is excluding margins
 
         public IEnumerable<UIElement> Children => this.GetChildren()?.OfType<UIElement>() ?? Enumerable.Empty<UIElement>();
 
@@ -38,7 +38,7 @@ namespace StandaloneApp.UI
             this.SetChildrenChangedHandler(_ => XamzorView.Current?.Layout());
         }
 
-        public void Measure(Point availableSize)
+        public Point Measure(Point availableSize)
         {
             if (IsInvalidInput(availableSize))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Measure': {availableSize}");
@@ -47,6 +47,8 @@ namespace StandaloneApp.UI
 
             if (IsInvalidOutput(DesiredSize))
                 throw new LayoutException($"Invalid result from '{GetType().Name}.Measure({availableSize})': {DesiredSize}");
+
+            return DesiredSize;
 
             // Available size must not be NaN (but can be infinity)
             bool IsInvalidInput(Point size) =>
@@ -59,13 +61,14 @@ namespace StandaloneApp.UI
                 double.IsNaN(size.X) || double.IsNaN(size.Y);
         }
 
-        public void Arrange(Rect finalRect)
+        public Rect Arrange(Rect finalRect)
         {
             if (IsInvalidInput(finalRect))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Arrange': {finalRect}");
 
             Bounds = ArrangeCore(finalRect);
             StateHasChanged();
+            return Bounds;
 
             // Position and size must not be NaN or infinity, and size must be >=0
             bool IsInvalidInput(Rect rect) =>
@@ -102,7 +105,7 @@ namespace StandaloneApp.UI
             size = Point.Min(ArrangeOverride(size), size);
 
             // Calculate offset
-            var origin = finalRect.TopLeft + new Point(Margin.Left, Margin.Top);
+            var origin = finalRect.TopLeft + Margin.TopLeft;
 
             switch (HorizontalAlignment)
             {
@@ -131,6 +134,7 @@ namespace StandaloneApp.UI
             return new Rect(origin, size);
         }
 
+        /// <param name="availableSize">Size available for the element, excluding margin</param>
         protected virtual Point MeasureOverride(Point availableSize)
         {
             // By default: Return bounding box size of all children positioned at (0, 0)

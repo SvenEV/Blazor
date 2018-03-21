@@ -5,29 +5,32 @@
 Welcome to your new app.
 
 @*<Foo Tag="A">
-    <Foo Tag="A1">
-        <Foo Tag="A1x"></Foo>
-        <Foo Tag="A1y"></Foo>
-        <Foo Tag="A1z">
-            <Foo Tag="A1z#" />
+        <Foo Tag="A1">
+            <Foo Tag="A1x"></Foo>
+            <Foo Tag="A1y"></Foo>
+            <Foo Tag="A1z">
+                <Foo Tag="A1z#" />
+            </Foo>
         </Foo>
-    </Foo>
-    <Foo Tag="A2">
-    </Foo>
-    <Foo Tag="A3">
-        <Foo Tag="A3x" />
-        <Foo Tag="A3y" />
-    </Foo>
-</Foo>*@
+        <Foo Tag="A2">
+        </Foo>
+        <Foo Tag="A3">
+            <Foo Tag="A3x" />
+            <Foo Tag="A3y" />
+        </Foo>
+    </Foo>*@
 
 <XamzorView>
     <StackPanel>
         <BoxView Background="red" Margin=@Thickness(6, 0, 6, 24) />
-        <StackPanel Orientation=@Orientation.Horizontal Spacing="12">
-            <BoxView Background="green" />
-            <BoxView Background="green" />
-            <BoxView Background="green" />
-        </StackPanel>
+        <Border Padding="@Thickness(10)" BorderThickness="@Thickness(10)" CornerRadius="@Thickness(20)" BorderColor="darkgreen"
+                HorizontalAlignment="@Alignment.Center">
+            <StackPanel Orientation=@Orientation.Horizontal Spacing="12">
+                <BoxView Background="green" />
+                <BoxView Background="green" />
+                <BoxView Background="green" />
+            </StackPanel>
+        </Border>
         <BoxView Background="blue" />
         <BoxView Background="black" HorizontalAlignment="@Alignment.Start" />
         <BoxView Background="black" HorizontalAlignment="@Alignment.Center" />
