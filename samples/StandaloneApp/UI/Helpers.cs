@@ -20,6 +20,9 @@ namespace StandaloneApp.UI
         public static Thickness Thickness(double left, double top, double right, double bottom) =>
             new Thickness(left, top, right, bottom);
 
+        public static Point Size(double width, double height) =>
+            new Point(width, height);
+
         public static double Clamp(double value, double min, double max) =>
             value < min ? min : (value > max ? max : value);
 

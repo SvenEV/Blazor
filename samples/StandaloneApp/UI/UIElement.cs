@@ -27,9 +27,9 @@ namespace StandaloneApp.UI
 
         public Point MaxSize { get; set; } = Point.PositiveInfinity;
 
-        public Point DesiredSize { get; private set; } // excluding margins
+        public Point DesiredSize { get; private set; } // includes margins, computed by Measure()
 
-        public Rect Bounds { get; private set; } // size is excluding margins
+        public Rect Bounds { get; private set; } // size excludes margins, computed by Arrange()
 
         public IEnumerable<UIElement> Children => this.GetChildren()?.OfType<UIElement>() ?? Enumerable.Empty<UIElement>();
 
@@ -95,43 +95,56 @@ namespace StandaloneApp.UI
         private Rect ArrangeCore(Rect finalRect)
         {
             var availableSizeMinusMargins = Point.Max(Point.Zero, finalRect.Size - Margin.Size);
+            var finalSize = ComputeSize();
+            var finalOffset = ComputeOffset(finalSize);
+            return new Rect(finalOffset, finalSize);
 
-            // Calculate used size
-            var size = new Point(
-                HorizontalAlignment == Alignment.Stretch ? availableSizeMinusMargins.X : Min(availableSizeMinusMargins.X, DesiredSize.X - Margin.HorizontalThickness),
-                VerticalAlignment == Alignment.Stretch ? availableSizeMinusMargins.Y : Min(availableSizeMinusMargins.Y, DesiredSize.Y - Margin.VerticalThickness));
-
-            size = Point.Clamp(size, MinSize, MaxSize);
-            size = Point.Min(ArrangeOverride(size), size);
-
-            // Calculate offset
-            var origin = finalRect.TopLeft + Margin.TopLeft;
-
-            switch (HorizontalAlignment)
+            Point ComputeSize()
             {
-                case Alignment.Center:
-                case Alignment.Stretch:
-                    origin += new Point((availableSizeMinusMargins.X - size.X) / 2, 0);
-                    break;
+                // On 'Stretch' start with full available size, otherwise start with DesiredSize
+                var size = new Point(
+                    HorizontalAlignment == Alignment.Stretch ? availableSizeMinusMargins.X : Min(availableSizeMinusMargins.X, DesiredSize.X - Margin.HorizontalThickness),
+                    VerticalAlignment == Alignment.Stretch ? availableSizeMinusMargins.Y : Min(availableSizeMinusMargins.Y, DesiredSize.Y - Margin.VerticalThickness));
 
-                case Alignment.End:
-                    origin += new Point(availableSizeMinusMargins.X - size.X, 0);
-                    break;
+                // Effective min/max size accounts for explicitly set Width/Height
+                var effectiveMinSize = Point.Clamp(new Point(Width.OrIfNan(0), Height.OrIfNan(0)), MinSize, MaxSize);
+                var effectiveMaxSize = Point.Clamp(new Point(Width.OrIfNan(double.PositiveInfinity), Height.OrIfNan(double.PositiveInfinity)), MinSize, MaxSize);
+                size = Point.Clamp(size, effectiveMinSize, effectiveMaxSize);
+
+                size = Point.Min(ArrangeOverride(size), size);
+                return size;
             }
 
-            switch (VerticalAlignment)
+            Point ComputeOffset(Point size)
             {
-                case Alignment.Center:
-                case Alignment.Stretch:
-                    origin += new Point(0, (availableSizeMinusMargins.Y - size.Y) / 2);
-                    break;
+                var offset = finalRect.TopLeft + Margin.TopLeft;
 
-                case Alignment.End:
-                    origin += new Point(0, availableSizeMinusMargins.Y - size.Y);
-                    break;
+                switch (HorizontalAlignment)
+                {
+                    case Alignment.Center:
+                    case Alignment.Stretch:
+                        offset += new Point((availableSizeMinusMargins.X - size.X) / 2, 0);
+                        break;
+
+                    case Alignment.End:
+                        offset += new Point(availableSizeMinusMargins.X - size.X, 0);
+                        break;
+                }
+
+                switch (VerticalAlignment)
+                {
+                    case Alignment.Center:
+                    case Alignment.Stretch:
+                        offset += new Point(0, (availableSizeMinusMargins.Y - size.Y) / 2);
+                        break;
+
+                    case Alignment.End:
+                        offset += new Point(0, availableSizeMinusMargins.Y - size.Y);
+                        break;
+                }
+
+                return offset;
             }
-
-            return new Rect(origin, size);
         }
 
         /// <param name="availableSize">Size available for the element, excluding margin</param>

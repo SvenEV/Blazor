@@ -22,7 +22,10 @@ Welcome to your new app.
 
 <XamzorView>
     <StackPanel>
-        <BoxView Background="red" Margin=@Thickness(6, 0, 6, 24) />
+        <BoxView Background="red" Margin=@Thickness(6, 0, 6, 24) Width="@double.NaN"
+                 MinSize="@Size(50, 200)"
+                 MaxSize="@Size(200, 50)"/>
+
         <Border Padding="@Thickness(10)" BorderThickness="@Thickness(10)" CornerRadius="@Thickness(20)" BorderColor="darkgreen"
                 HorizontalAlignment="@Alignment.Center">
             <StackPanel Orientation=@Orientation.Horizontal Spacing="12">
