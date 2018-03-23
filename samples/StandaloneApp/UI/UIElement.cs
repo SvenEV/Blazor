@@ -42,6 +42,12 @@ namespace StandaloneApp.UI
 
         public IEnumerable<UIElement> Children => this.GetChildren()?.OfType<UIElement>() ?? Enumerable.Empty<UIElement>();
 
+        // Temporary properties - we'll invent some form of "attached properties" in the future
+        public int Row { get; set; } = 0;
+        public int Column { get; set; } = 0;
+        public int RowSpan { get; set; } = 1;
+        public int ColumnSpan { get; set; } = 1;
+
         public UIElement()
         {
             this.SetChildrenChangedHandler(_ => XamzorView.Current?.Layout());

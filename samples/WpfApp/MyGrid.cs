@@ -14,7 +14,6 @@ namespace WpfApp
 
         public List<ColumnDefinition> ColumnDefinitions { get; } = new List<ColumnDefinition>();
 
-
         private GridSpan[] _rows;
         private GridSpan[] _cols;
 
@@ -151,21 +150,6 @@ namespace WpfApp
                 DefinedMinSize = definedMinSize;
                 DefinedMaxSize = definedMaxSize;
                 ComputedSize = double.NaN;
-            }
-        }
-
-        struct Cell
-        {
-            public ColumnDefinition DefinedWidth { get; }
-
-            public RowDefinition DefinedHeight { get; }
-
-
-
-            public Cell(ColumnDefinition definedWidth, RowDefinition definedHeight) : this()
-            {
-                DefinedWidth = definedWidth ?? throw new ArgumentNullException(nameof(definedWidth));
-                DefinedHeight = definedHeight ?? throw new ArgumentNullException(nameof(definedHeight));
             }
         }
     }

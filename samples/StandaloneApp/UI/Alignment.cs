@@ -14,28 +14,42 @@ namespace StandaloneApp.UI
 
     public class RowDefinition
     {
-        public GridLength Size { get; set; }
+        public GridLength Height { get; set; }
 
-        public RowDefinition(GridLength size) => Size = size;
+        public double MinHeight { get; set; }
+
+        public double MaxHeight { get; set; }
+
+        public RowDefinition(GridLength size) => Height = size;
     }
 
     public class ColumnDefinition
     {
-        public GridLength Size { get; set; }
+        public GridLength Width { get; set; }
 
-        public ColumnDefinition(GridLength size) => Size = size;
+        public double MinWidth { get; set; }
+
+        public double MaxWidth { get; set; }
+
+        public ColumnDefinition(GridLength size) => Width = size;
     }
 
     public struct GridLength
     {
         public double Value { get; }
 
-        public GridUnitType UnitType { get; }
+        public GridUnitType GridUnitType { get; }
+
+        public bool IsAbsolute => GridUnitType == GridUnitType.Absolute;
+
+        public bool IsAuto => GridUnitType == GridUnitType.Auto;
+
+        public bool IsStar => GridUnitType == GridUnitType.Star;
 
         public GridLength(double value, GridUnitType unitType) : this()
         {
             Value = value;
-            UnitType = unitType;
+            GridUnitType = unitType;
         }
 
         public static GridLength Parse(string s)

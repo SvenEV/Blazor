@@ -19,6 +19,19 @@ namespace StandaloneApp.UI
             Y = y;
         }
 
+        public double this[int dimension]
+        {
+            get
+            {
+                switch (dimension)
+                {
+                    case 0: return X;
+                    case 1: return Y;
+                    default: throw new ArgumentOutOfRangeException(nameof(dimension));
+                }
+            }
+        }
+
         public Point WithX(double x) => new Point(x, Y);
         public Point WithY(double y) => new Point(X, y);
         public Point OrWhereNaN(Point fallbackValue) =>
