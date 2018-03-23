@@ -16,9 +16,9 @@ namespace StandaloneApp.UI
     {
         public GridLength Height { get; set; }
 
-        public double MinHeight { get; set; }
+        public double MinHeight { get; set; } = 0;
 
-        public double MaxHeight { get; set; }
+        public double MaxHeight { get; set; } = double.PositiveInfinity;
 
         public RowDefinition(GridLength size) => Height = size;
     }
@@ -27,9 +27,9 @@ namespace StandaloneApp.UI
     {
         public GridLength Width { get; set; }
 
-        public double MinWidth { get; set; }
+        public double MinWidth { get; set; } = 0;
 
-        public double MaxWidth { get; set; }
+        public double MaxWidth { get; set; } = double.PositiveInfinity;
 
         public ColumnDefinition(GridLength size) => Width = size;
     }
