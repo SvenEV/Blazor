@@ -61,46 +61,5 @@ namespace Microsoft.AspNetCore.Blazor
 
             return rootChildren;
         }
-
-        public static IReadOnlyList<IComponent> DetermineChildrenInTree_UNNECESSARILY_DEEP(RenderTreeFrame[] frames, int frameCount)
-        {
-            var rootChildren = new List<IComponent>();
-            var ancestorStack = new Stack<(int startIndex, RenderTreeFrame frame, List<IComponent> children)>();
-
-            for (var i = 0; i < frameCount; i++)
-            {
-                var frame = frames[i];
-
-                switch (frame.FrameType)
-                {
-                    case RenderTreeFrameType.Element:
-                        i += frame.ElementSubtreeLength; // skip element subtree
-                        break;
-
-                    case RenderTreeFrameType.Component:
-                        // add component instance as child to current parent
-                        var childList = (ancestorStack.Count > 0)
-                            ? ancestorStack.Peek().children
-                            : rootChildren;
-
-                        childList.Add(frame.Component);
-
-                        // recurse into component subtree
-                        ancestorStack.Push((i, frame, new List<IComponent>()));
-                        break;
-                }
-
-                while (ancestorStack.Count > 0 &&
-                    ancestorStack.Peek() is var parentEntry &&
-                    i == parentEntry.startIndex + parentEntry.frame.ComponentSubtreeLength - 1)
-                {
-                    // component closing - assign collected children & pop from stack
-                    parentEntry.frame.Component.SetChildren(parentEntry.children);
-                    ancestorStack.Pop();
-                }
-            }
-
-            return rootChildren;
-        }
     }
 }
