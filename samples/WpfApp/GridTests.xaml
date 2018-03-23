@@ -1,0 +1,71 @@
+﻿<Window x:Class="WpfApp.GridTests"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp"
+        mc:Ignorable="d" Title="GridTests" 
+        SizeToContent="WidthAndHeight">
+    
+    <Grid Background="Gray">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <!-- ORIGINAL GRID -->
+        <Grid Background="Black" Margin="0,0,0,10" Width="300" Height="300">
+            <Grid.RowDefinitions>
+                <RowDefinition MaxHeight="200"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto" MinWidth="100"/>
+                <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Background="Red" Grid.ColumnSpan="2"/>
+            <Border Background="Yellow" Grid.Row="1"/>
+            <Border Background="Green" Grid.Row="2"/>
+
+            <Border Background="DarkRed" Grid.Column="1" Margin="12"/>
+            <Border Background="LightYellow" Grid.Column="1" Grid.Row="1" MinHeight="20"/>
+            <Border Background="DarkGreen" Grid.Column="1" Grid.Row="2"/>
+
+            <Border Background="Magenta" Grid.Column="2"/>
+            <Border Background="Orange" Grid.Column="2" Grid.Row="1"/>
+            <Border Background="Cyan" Grid.Column="2" Grid.Row="2"/>
+
+        </Grid>
+
+        <!-- CUSTOM GRID -->
+        <local:MyGrid Background="Black" Grid.Row="1" Width="300" Height="300">
+            <local:MyGrid.RowDefinitions>
+                <RowDefinition MaxHeight="200"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
+            </local:MyGrid.RowDefinitions>
+            <local:MyGrid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto" MinWidth="100"/>
+                <ColumnDefinition Width="60"/>
+            </local:MyGrid.ColumnDefinitions>
+
+            <Border Background="Red" Grid.ColumnSpan="2"/>
+            <Border Background="Yellow" Grid.Row="1"/>
+            <Border Background="Green" Grid.Row="2"/>
+
+            <Border Background="DarkRed" Grid.Column="1" Margin="12"/>
+            <Border Background="LightYellow" Grid.Column="1" Grid.Row="1" MinHeight="20"/>
+            <Border Background="DarkGreen" Grid.Column="1" Grid.Row="2"/>
+
+            <Border Background="Magenta" Grid.Column="2"/>
+            <Border Background="Orange" Grid.Column="2" Grid.Row="1"/>
+            <Border Background="Cyan" Grid.Column="2" Grid.Row="2"/>
+
+        </local:MyGrid>
+        
+    </Grid>
+</Window>
