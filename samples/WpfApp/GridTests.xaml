@@ -16,54 +16,35 @@
         <!-- ORIGINAL GRID -->
         <Grid Background="Black" Margin="0,0,0,10" Width="300" Height="300">
             <Grid.RowDefinitions>
-                <RowDefinition MaxHeight="200"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto" MinWidth="100"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
 
-            <Border Background="Red" Grid.ColumnSpan="2"/>
-            <Border Background="Yellow" Grid.Row="1"/>
-            <Border Background="Green" Grid.Row="2"/>
-
-            <Border Background="DarkRed" Grid.Column="1" Margin="12"/>
-            <Border Background="LightYellow" Grid.Column="1" Grid.Row="1" MinHeight="20"/>
-            <Border Background="DarkGreen" Grid.Column="1" Grid.Row="2"/>
-
-            <Border Background="Magenta" Grid.Column="2"/>
-            <Border Background="Orange" Grid.Column="2" Grid.Row="1"/>
-            <Border Background="Cyan" Grid.Column="2" Grid.Row="2"/>
+            <Border Height="100" Grid.RowSpan="3" Background="Red"/>
+            <Border Width="100" Height="20" Grid.Row="1" Background="Yellow"/>
+            <Border Width="100" Height="20" Grid.Row="2" Background="Yellow" HorizontalAlignment="Right"/>
+            <Border Grid.Row="3" Background="Blue"/>
 
         </Grid>
 
         <!-- CUSTOM GRID -->
         <local:MyGrid Background="Black" Grid.Row="1" Width="300" Height="300">
             <local:MyGrid.RowDefinitions>
-                <RowDefinition MaxHeight="200"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </local:MyGrid.RowDefinitions>
             <local:MyGrid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="Auto" MinWidth="100"/>
-                <ColumnDefinition Width="60"/>
             </local:MyGrid.ColumnDefinitions>
 
-            <Border Background="Red" Grid.ColumnSpan="2"/>
-            <Border Background="Yellow" Grid.Row="1"/>
-            <Border Background="Green" Grid.Row="2"/>
-
-            <Border Background="DarkRed" Grid.Column="1" Margin="12"/>
-            <Border Background="LightYellow" Grid.Column="1" Grid.Row="1" MinHeight="20"/>
-            <Border Background="DarkGreen" Grid.Column="1" Grid.Row="2"/>
-
-            <Border Background="Magenta" Grid.Column="2"/>
-            <Border Background="Orange" Grid.Column="2" Grid.Row="1"/>
-            <Border Background="Cyan" Grid.Column="2" Grid.Row="2"/>
+            <Border Height="100" Grid.RowSpan="3" Background="Red"/>
+            <Border Width="100" Height="20" Grid.Row="1" Background="Yellow"/>
+            <Border Width="100" Height="20" Grid.Row="2" Background="Yellow" HorizontalAlignment="Right"/>
+            <Border Grid.Row="3" Background="Blue"/>
 
         </local:MyGrid>
         
