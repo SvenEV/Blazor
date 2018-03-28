@@ -50,23 +50,30 @@ namespace StandaloneApp.UI
         public int Column { get; set; } = 0;
         public int RowSpan { get; set; } = 1;
         public int ColumnSpan { get; set; } = 1;
-        
+
         protected override void OnInit()
         {
             RenderHandle.ChildrenChanged += _ => XamzorView.Current?.Layout();
+            XamzorView.Current?.Layout();
         }
 
         public Point Measure(Point availableSize)
         {
             if (!RenderHandle.IsInitialized)
+            {
+                UILog.Write("LAYOUT", $"{GetType().Name}.Measure({availableSize}) returned early - RenderHandle not initialized");
                 return Point.Zero;
+            }
 
             if (IsInvalidInput(availableSize))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Measure': {availableSize}");
 
-            Console.WriteLine($"{GetType().Name}.Measure({availableSize})...");
-            DesiredSize = Point.Min(MeasureCore(availableSize), availableSize);
-            Console.WriteLine($"<<< {nameof(DesiredSize)} = {DesiredSize}");
+            using (UILog.BeginScope("LAYOUT",
+                $"{GetType().Name}.Measure({availableSize})...",
+                () => $"<<< {nameof(DesiredSize)} = {DesiredSize}"))
+            {
+                DesiredSize = Point.Min(MeasureCore(availableSize), availableSize);
+            }
 
             if (IsInvalidOutput(DesiredSize))
                 throw new LayoutException($"Invalid result from '{GetType().Name}.Measure({availableSize})': {DesiredSize}");
@@ -92,9 +99,12 @@ namespace StandaloneApp.UI
             if (IsInvalidInput(finalRect))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Arrange': {finalRect}");
 
-            Console.WriteLine($"{GetType().Name}.Arrange({finalRect})...");
-            Bounds = ArrangeCore(finalRect);
-            Console.WriteLine($"<<< {nameof(Bounds)} = {Bounds}");
+            using (UILog.BeginScope("LAYOUT",
+                $"{GetType().Name}.Arrange({finalRect})...",
+                () => $"<<< {nameof(Bounds)} = {Bounds}"))
+            {
+                Bounds = ArrangeCore(finalRect);
+            }
             StateHasChanged();
             return Bounds;
 

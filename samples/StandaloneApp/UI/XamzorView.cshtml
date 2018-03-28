@@ -19,9 +19,10 @@
 
     public void Layout()
     {
-        Console.WriteLine("LAYOUT STARTING");
-        Measure(new Point(Width, Height));
-        Arrange(new Rect(0, 0, Width, Height));
-        Console.WriteLine("LAYOUT FINISHED");
+        using (UILog.BeginScope("LAYOUT", "LAYOUT STARTING", writeBraces: true))
+        {
+            Measure(new Point(Width, Height));
+            Arrange(new Rect(0, 0, Width, Height));
+        }
     }
 }
