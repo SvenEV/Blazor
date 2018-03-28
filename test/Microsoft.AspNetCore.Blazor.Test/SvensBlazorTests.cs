@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Blazor.RenderTree;
 using Microsoft.AspNetCore.Blazor.Test.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Blazor.Test
@@ -9,7 +10,7 @@ namespace Microsoft.AspNetCore.Blazor.Test
     public class SvensBlazorTests
     {
         [Fact]
-        public void ComponentGetsAssignedChildren()
+        public void ComponentChildrenStuffWorks()
         {
             // Arrange
             var renderer = new TestRenderer();
@@ -35,56 +36,58 @@ namespace Microsoft.AspNetCore.Blazor.Test
             component.TriggerRender();
 
             // Assert
-            Assert.Collection(component.GetChildren(),
+            Assert.Collection(component.Children,
                 child => Assert.True(child is TestComponent2 c && c.Tag == "A"),
                 child => Assert.True(child is TestComponent2 c && c.Tag == "C"));
 
-            Assert.Collection(component.GetChildren()[0].GetChildren(),
+            Assert.Collection(component.Children.ElementAt(0).Children,
                 child => Assert.True(child is TestComponent2 c && c.Tag == "B"));
 
-            Assert.Empty(component.GetChildren()[0].GetChildren()[0].GetChildren());
-            Assert.Empty(component.GetChildren()[1].GetChildren());
+            Assert.Empty(component.Children.ElementAt(0).Children.ElementAt(0).Children);
+            Assert.Empty(component.Children.ElementAt(1).Children);
         }
-
+        
         private class TestComponent : IComponent
         {
-            private RenderHandle _renderHandle;
-            private RenderFragment _renderFragment;
+            protected RenderFragment _renderFragment;
+            protected RenderHandle _renderHandle;
 
-            public IReadOnlyList<IComponent> Children => this.GetChildren();
+            public TestComponent Parent => _renderHandle.GetParent() as TestComponent;
 
-            public TestComponent(RenderFragment renderFragment)
-            {
+            public IEnumerable<TestComponent> Children => _renderHandle.GetChildren().OfType<TestComponent>();
+
+            public TestComponent(RenderFragment renderFragment = null) => 
                 _renderFragment = renderFragment;
+
+            public void SetParameters(ParameterCollection parameters)
+            {
+                parameters.AssignToProperties(this);
+                TriggerRender();
             }
+
+            public void TriggerRender()
+                => _renderHandle.Render(_renderFragment);
 
             public void Init(RenderHandle renderHandle)
             {
                 _renderHandle = renderHandle;
             }
-
-            public void SetParameters(ParameterCollection parameters)
-                => TriggerRender();
-
-            public void TriggerRender()
-                => _renderHandle.Render(_renderFragment);
         }
 
-        private class TestComponent2 : BlazorComponent
+        private class TestComponent2 : TestComponent
         {
             public string Tag { get; set; }
 
-            public RenderFragment ChildContent { get; set; }
-
-            public IReadOnlyList<IComponent> Children => this.GetChildren();
-
-            protected override void BuildRenderTree(RenderTreeBuilder builder)
+            public TestComponent2()
             {
-                base.BuildRenderTree(builder);
-                builder.AddContent(0, ChildContent);
+                _renderFragment = Render;
             }
 
+            public RenderFragment ChildContent { get; set; }
+            
             public override string ToString() => Tag;
+
+            private void Render(RenderTreeBuilder builder) => builder.AddContent(0, ChildContent);
         }
     }
 }

@@ -2,12 +2,12 @@
 
 <div style="padding: 12px; border: 1px solid black;">
     <button @onclick(ReRender)>Refresh</button>
-    @if (this.GetChildren() == null)
+    @if (RenderHandle.GetChildren() == null)
     {
         <strong>Children == null</strong>
     }
     <ul>
-        @foreach (var child in this.GetChildren() ?? Enumerable.Empty<IComponent>())
+        @foreach (var child in RenderHandle.GetChildren() ?? Enumerable.Empty<IComponent>())
         {
             <li><strong>@child.GetType().Name</strong> @child.ToString()</li>
         }

@@ -6,6 +6,8 @@
 
 @functions{
 
+    private static readonly GridSpan[] DefaultGridSpans = new[] { new GridSpan(new GridLength(1, GridUnitType.Star), 0, double.PositiveInfinity) };
+
     public IReadOnlyList<RowDefinition> RowDefinitions { get; set; }
     public IReadOnlyList<ColumnDefinition> ColumnDefinitions { get; set; }
 
@@ -14,8 +16,14 @@
 
     protected override Point MeasureOverride(Point availableSize)
     {
-        var rows = RowDefinitions.Select(def => new GridSpan(def.Height, def.MinHeight, def.MaxHeight)).ToArray();
-        var cols = ColumnDefinitions.Select(def => new GridSpan(def.Width, def.MinWidth, def.MaxWidth)).ToArray();
+        var rows = (RowDefinitions?.Count > 0)
+            ? RowDefinitions?.Select(def => new GridSpan(def.Height, def.MinHeight, def.MaxHeight)).ToArray()
+            : DefaultGridSpans;
+
+        var cols = (ColumnDefinitions?.Count > 0)
+            ? ColumnDefinitions?.Select(def => new GridSpan(def.Width, def.MinWidth, def.MaxWidth)).ToArray()
+            : DefaultGridSpans;
+
         var spans = new[] { cols, rows };
 
         var remainingSpace = availableSize;

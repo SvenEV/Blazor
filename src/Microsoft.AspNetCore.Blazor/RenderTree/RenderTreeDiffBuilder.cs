@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Blazor.RenderTree
             var editsBuffer = batchBuilder.EditsBuffer;
             var editsBufferStartLength = editsBuffer.Count;
 
-            var diffContext = new DiffContext(renderer, batchBuilder, oldTree.Array, newTree.Array);
+            var diffContext = new DiffContext(renderer, batchBuilder, oldTree.Array, newTree.Array, componentId);
             AppendDiffEntriesForRange(ref diffContext, 0, oldTree.Count, 0, newTree.Count);
 
             var editsSegment = editsBuffer.ToSegment(editsBufferStartLength, editsBuffer.Count);
@@ -467,7 +467,7 @@ namespace Microsoft.AspNetCore.Blazor.RenderTree
                 throw new InvalidOperationException($"Child component already exists during {nameof(InitializeNewComponentFrame)}");
             }
 
-            diffContext.Renderer.InstantiateChildComponentOnFrame(ref frame);
+            diffContext.Renderer.InstantiateChildComponentOnFrame(ref frame, diffContext.ParentComponentId);
             var childComponentInstance = frame.Component;
 
             // Set initial parameters
@@ -514,13 +514,15 @@ namespace Microsoft.AspNetCore.Blazor.RenderTree
             public readonly RenderTreeFrame[] NewTree;
             public readonly ArrayBuilder<RenderTreeEdit> Edits;
             public readonly ArrayBuilder<RenderTreeFrame> ReferenceFrames;
+            public readonly int ParentComponentId;
             public int SiblingIndex;
 
             public DiffContext(
                 Renderer renderer,
                 RenderBatchBuilder batchBuilder,
                 RenderTreeFrame[] oldTree,
-                RenderTreeFrame[] newTree)
+                RenderTreeFrame[] newTree,
+                int parentComponentId)
             {
                 Renderer = renderer;
                 BatchBuilder = batchBuilder;
@@ -528,6 +530,7 @@ namespace Microsoft.AspNetCore.Blazor.RenderTree
                 NewTree = newTree;
                 Edits = batchBuilder.EditsBuffer;
                 ReferenceFrames = batchBuilder.ReferenceFramesBuffer;
+                ParentComponentId = parentComponentId;
                 SiblingIndex = 0;
             }
         }

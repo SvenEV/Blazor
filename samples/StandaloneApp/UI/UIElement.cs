@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static System.Math;
@@ -40,25 +41,32 @@ namespace StandaloneApp.UI
 
         public Rect Bounds { get; private set; } // size excludes margins, computed by Arrange()
 
-        public IEnumerable<UIElement> Children => this.GetChildren()?.OfType<UIElement>() ?? Enumerable.Empty<UIElement>();
+        public UIElement Parent => RenderHandle.GetParent() as UIElement;
+
+        public IEnumerable<UIElement> Children => RenderHandle.GetChildren().OfType<UIElement>();
 
         // Temporary properties - we'll invent some form of "attached properties" in the future
         public int Row { get; set; } = 0;
         public int Column { get; set; } = 0;
         public int RowSpan { get; set; } = 1;
         public int ColumnSpan { get; set; } = 1;
-
-        public UIElement()
+        
+        protected override void OnInit()
         {
-            this.SetChildrenChangedHandler(_ => XamzorView.Current?.Layout());
+            RenderHandle.ChildrenChanged += _ => XamzorView.Current?.Layout();
         }
 
         public Point Measure(Point availableSize)
         {
+            if (!RenderHandle.IsInitialized)
+                return Point.Zero;
+
             if (IsInvalidInput(availableSize))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Measure': {availableSize}");
 
+            Console.WriteLine($"{GetType().Name}.Measure({availableSize})...");
             DesiredSize = Point.Min(MeasureCore(availableSize), availableSize);
+            Console.WriteLine($"<<< {nameof(DesiredSize)} = {DesiredSize}");
 
             if (IsInvalidOutput(DesiredSize))
                 throw new LayoutException($"Invalid result from '{GetType().Name}.Measure({availableSize})': {DesiredSize}");
@@ -78,10 +86,15 @@ namespace StandaloneApp.UI
 
         public Rect Arrange(Rect finalRect)
         {
+            if (!RenderHandle.IsInitialized)
+                return default;
+
             if (IsInvalidInput(finalRect))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Arrange': {finalRect}");
 
+            Console.WriteLine($"{GetType().Name}.Arrange({finalRect})...");
             Bounds = ArrangeCore(finalRect);
+            Console.WriteLine($"<<< {nameof(Bounds)} = {Bounds}");
             StateHasChanged();
             return Bounds;
 

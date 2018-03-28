@@ -49,11 +49,19 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
         /// </summary>
         /// <param name="component">The component.</param>
         /// <returns>The component's assigned identifier.</returns>
-        protected int AssignComponentId(IComponent component)
+        protected int AssignComponentId(IComponent component, int parentComponentId)
         {
             var componentId = _nextComponentId++;
-            var componentState = new ComponentState(this, componentId, component);
+            var componentState = new ComponentState(this, componentId, component, parentComponentId);
             _componentStateById.Add(componentId, componentState);
+
+            // Establish parent/child relationships
+            if (parentComponentId != -1)
+            {
+                var parentState = GetRequiredComponentState(parentComponentId);
+                parentState.AddChildComponent(componentId); // Add to parent's list of children
+            }
+
             component.Init(new RenderHandle(this, componentId));
             return componentId;
         }
@@ -93,7 +101,7 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
             }
         }
 
-        internal void InstantiateChildComponentOnFrame(ref RenderTreeFrame frame)
+        internal void InstantiateChildComponentOnFrame(ref RenderTreeFrame frame, int parentComponentId)
         {
             if (frame.FrameType != RenderTreeFrameType.Component)
             {
@@ -106,7 +114,7 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
             }
 
             var newComponent = InstantiateComponent(frame.ComponentType);
-            var newComponentId = AssignComponentId(newComponent);
+            var newComponentId = AssignComponentId(newComponent, parentComponentId);
             frame = frame.WithComponentInstance(newComponentId, newComponent);
         }
 
@@ -136,7 +144,7 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
             }
         }
 
-        private ComponentState GetRequiredComponentState(int componentId)
+        internal ComponentState GetRequiredComponentState(int componentId)
             => _componentStateById.TryGetValue(componentId, out var componentState)
                 ? componentState
                 : throw new ArgumentException($"The renderer does not have a component with ID {componentId}.");
@@ -178,9 +186,17 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
             while (_batchBuilder.ComponentDisposalQueue.Count > 0)
             {
                 var disposeComponentId = _batchBuilder.ComponentDisposalQueue.Dequeue();
-                GetRequiredComponentState(disposeComponentId).DisposeInBatch(_batchBuilder);
+                var disposeComponentState = GetRequiredComponentState(disposeComponentId);
+                disposeComponentState.DisposeInBatch(_batchBuilder);
                 _componentStateById.Remove(disposeComponentId);
                 _batchBuilder.DisposedComponentIds.Append(disposeComponentId);
+
+                // Destroy parent/child relationships
+                if (disposeComponentState.ParentComponentId != -1)
+                {
+                    var parentState = GetOptionalComponentState(disposeComponentState.ParentComponentId);
+                    parentState?.RemoveChildComponent(disposeComponentId);
+                }
             }
         }
 
