@@ -2,7 +2,7 @@
 
 @inherits StandaloneApp.UI.UIElement
 
-<div style="@LayoutCss font-family: @FontFamily; font-size: @(FontSize)px; color: @Foreground;
+<div style="@LayoutCss font-family: @FontFamily; font-size: @(FontSize)px; color: @Foreground; line-height: 1;
      @((FontStyle == FontStyle.Italic || FontStyle == FontStyle.BoldItalic ? "font-style: italic;" : ""))
      @((FontStyle == FontStyle.Bold || FontStyle == FontStyle.BoldItalic ? "font-weight: bold;" : ""))">
 
@@ -52,7 +52,7 @@
         var fontStream = System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceStream("StandaloneApp.UI.arial.ttf");
         fontCollection.Install(fontStream);
         var fontFamily = fontCollection.Families.First();
-        var newFont = fontFamily.CreateFont(size * 1.02f, style);
+        var newFont = fontFamily.CreateFont(size * 1.026f, style); // 1.02 is enough in Chrome and Firefox, but not in Edge
         _fontCache[(size, style)] = newFont;
         return newFont;
     }
