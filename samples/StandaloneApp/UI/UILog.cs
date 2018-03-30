@@ -7,8 +7,13 @@ namespace StandaloneApp.UI
     {
         private static readonly ThreadLocal<int> _depth = new ThreadLocal<int>();
 
+        public static bool IsEnabled { get; set; } = true;
+
         public static IDisposable BeginScope(string category, string enterText, Func<string> exitText = null, bool writeBraces = false)
         {
+            if (!IsEnabled)
+                return new LogScope(null);
+
             var scope = new LogScope(() =>
             {
                 _depth.Value--;
@@ -27,7 +32,8 @@ namespace StandaloneApp.UI
 
         public static void Write(string category, string text)
         {
-            Console.WriteLine($"[{category}] " + "".PadLeft(4 * _depth.Value) + text);
+            if (IsEnabled)
+                Console.WriteLine($"[{category}] " + "".PadLeft(4 * _depth.Value) + text);
         }
 
         class LogScope : IDisposable

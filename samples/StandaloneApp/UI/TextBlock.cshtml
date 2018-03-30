@@ -1,0 +1,59 @@
+﻿@using SixLabors.Fonts
+
+@inherits StandaloneApp.UI.UIElement
+
+<div style="@LayoutCss font-family: @FontFamily; font-size: @(FontSize)px; color: @Foreground;
+     @((FontStyle == FontStyle.Italic || FontStyle == FontStyle.BoldItalic ? "font-style: italic;" : ""))
+     @((FontStyle == FontStyle.Bold || FontStyle == FontStyle.BoldItalic ? "font-weight: bold;" : ""))">
+
+    @Text
+</div>
+
+@functions{
+
+    public string Foreground { get; set; } = "black";
+
+    public string FontFamily { get; set; } = "Segoe UI";
+
+    public double FontSize { get; set; } = 15;
+
+    public FontStyle FontStyle { get; set; } = FontStyle.Regular;
+
+    public string Text { get; set; }
+
+    protected override Point MeasureOverride(Point availableSize)
+    {
+        if (Text == null)
+            return Point.Zero;
+
+        var font = GetFont((float)FontSize, FontStyle);
+
+        var size = TextMeasurer.Measure(Text, new RendererOptions(font)
+        {
+            WrappingWidth = (float)availableSize.X
+        });
+
+        UILog.Write("TEXT", $"Measured a size of {new Point(size.Width, size.Height)} for text '{Text}'");
+
+        return new Point(size.Width, size.Height);
+    }
+
+    private static readonly Dictionary<(float, FontStyle), Font> _fontCache = new Dictionary<(float, FontStyle), Font>();
+
+    private static Font GetFont(float size, FontStyle style)
+    {
+        if (_fontCache.TryGetValue((size, style), out var font))
+            return font;
+
+        UILog.Write("TEXT", $"Embedded resources: {string.Join(", ", System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceNames())}");
+        UILog.Write("TEXT", $"Size: {size}, Style: {style}");
+
+        var fontCollection = new FontCollection();
+        var fontStream = System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceStream("StandaloneApp.UI.arial.ttf");
+        fontCollection.Install(fontStream);
+        var fontFamily = fontCollection.Families.First();
+        var newFont = fontFamily.CreateFont(size * 1.02f, style);
+        _fontCache[(size, style)] = newFont;
+        return newFont;
+    }
+}

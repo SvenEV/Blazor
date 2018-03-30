@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Components;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static System.Math;
@@ -9,7 +8,7 @@ namespace StandaloneApp.UI
 {
     public class UIElement : BlazorComponent
     {
-        public string LayoutCss => $"position: absolute; left: {Bounds.X}px; top: {Bounds.Y}px; width: {Bounds.Width}px; height: {Bounds.Height}px; ";
+        public string LayoutCss => $"position: absolute; overflow: hidden; left: {Bounds.X}px; top: {Bounds.Y}px; width: {Bounds.Width}px; height: {Bounds.Height}px; ";
 
         public RenderFragment ChildContent { get; set; }
 
@@ -33,6 +32,8 @@ namespace StandaloneApp.UI
 
         public Thickness Margin { get; set; } = Thickness.Zero;
 
+        public string Tag { get; set; }
+        
         public Alignment HorizontalAlignment { get; set; } = Alignment.Stretch;
 
         public Alignment VerticalAlignment { get; set; } = Alignment.Stretch;
@@ -53,6 +54,7 @@ namespace StandaloneApp.UI
 
         protected override void OnInit()
         {
+            UILog.Write("INIT", GetType().Name + " " + Tag + " initialized");
             RenderHandle.ChildrenChanged += _ => XamzorView.Current?.Layout();
             XamzorView.Current?.Layout();
         }
@@ -119,7 +121,11 @@ namespace StandaloneApp.UI
 
         private Point MeasureCore(Point availableSize)
         {
-            var constrainedSize = Point.Clamp(availableSize - Margin.Size, MinSize, MaxSize);
+            // Effective min/max size accounts for explicitly set Width/Height
+            var effectiveMinSize = Point.Clamp(Size.OrWhereNaN(Point.Zero), MinSize, MaxSize);
+            var effectiveMaxSize = Point.Clamp(Size.OrWhereNaN(Point.PositiveInfinity), MinSize, MaxSize);
+            var constrainedSize = Point.Clamp(availableSize - Margin.Size, effectiveMinSize, effectiveMaxSize);
+
             var measuredSize = MeasureOverride(constrainedSize);
             var desiredSize = Point.Clamp(Size.OrWhereNaN(measuredSize), MinSize, MaxSize);
             return Point.Max(Point.Zero, desiredSize + Margin.Size);
@@ -203,5 +209,7 @@ namespace StandaloneApp.UI
 
             return finalSize;
         }
+
+        public override string ToString() => GetType().Name + " " + Tag;
     }
 }
