@@ -1,10 +1,8 @@
-﻿@using SixLabors.Fonts
-@using Microsoft.AspNetCore.Blazor.Browser.Interop
+﻿@using Microsoft.AspNetCore.Blazor.Browser.Interop
 
 @inherits StandaloneApp.UI.UIElement
 
 <div style="@LayoutCss @StyleString">
-
     @Text
 </div>
 
@@ -16,7 +14,9 @@
 
     public double FontSize { get; set; } = 15;
 
-    public FontStyle FontStyle { get; set; } = FontStyle.Regular;
+    public FontWeight FontWeight { get; set; } = FontWeight.Normal;
+
+    public FontStyle FontStyle { get; set; } = FontStyle.Normal;
 
     public string Text { get; set; }
 
@@ -29,7 +29,7 @@
         var sizeString = RegisteredFunction.Invoke<string>("measureHtml", $"<div style=\"{StyleString}\">{Text}</div>");
         var sizeParts = sizeString.Split(',');
         var size = new Point(
-            Math.Ceiling(double.Parse(sizeParts[0])) + 1, 
+            Math.Ceiling(double.Parse(sizeParts[0])) + 1,
             Math.Ceiling(double.Parse(sizeParts[1])) + 1);
 
         UILog.Write("TEXT", $"Measured a size of {size} for text '{Text}'");
@@ -39,6 +39,6 @@
 
     private string StyleString =>
         $"font-family: {FontFamily}; font-size: {FontSize}px; color: {Foreground};" +
-        (FontStyle == FontStyle.Italic || FontStyle == FontStyle.BoldItalic ? "font-style: italic;" : "") +
-        (FontStyle == FontStyle.Bold || FontStyle == FontStyle.BoldItalic ? "font-weight: bold;" : "");
+        $"font-weight: {(int)FontWeight};" +
+        $"font-style: {FontStyle.ToString().ToLower()}";
 }

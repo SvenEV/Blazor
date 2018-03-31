@@ -11,19 +11,12 @@
   <ItemGroup>
     <!-- For "dotnet watch"-support (see https://github.com/aspnet/Blazor/issues/5) -->
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
-    <Watch Include="**\*.cshtml"/>
+    <Watch Include="**\*.html" />
+    <Watch Include="**\*.csproj" />
+    <Watch Include="**\*.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="UI\arial.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="UI\arial.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\SixLaborsFonts\src\SixLabors.Fonts\SixLabors.Fonts.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Blazor\Microsoft.AspNetCore.Blazor.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Blazor.Browser\Microsoft.AspNetCore.Blazor.Browser.csproj" />
   </ItemGroup>
