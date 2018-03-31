@@ -10,7 +10,27 @@
 <body>
     <app>Loading...</app>
 
+    <div id="xamzorMeasureContainer" style="display: inline-block; visibility: hidden;">
+        <!-- function "measureHtml will temporarily place elements here to measure them -->
+    </div>
+
     <script src="css/bootstrap/bootstrap-native.min.js"></script>
-    <script type="blazor-boot"></script>
+    <script type="blazor-boot">
+    </script>
+
+    <!-- Xamzor script for measuring HTML content -->
+    <script type="text/javascript">
+        Blazor.registerFunction('measureHtml', (data) => {
+            var container = document.getElementById("xamzorMeasureContainer");
+
+            if (container == null)
+                return "0,0";
+
+            container.innerHTML = data;
+            var result = container.offsetWidth + "," + container.offsetHeight;
+            container.innerHTML = "";
+            return result;
+        })
+    </script>
 </body>
 </html>

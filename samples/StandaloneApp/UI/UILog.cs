@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace StandaloneApp.UI
@@ -8,6 +9,11 @@ namespace StandaloneApp.UI
         private static readonly ThreadLocal<int> _depth = new ThreadLocal<int>();
 
         public static bool IsEnabled { get; set; } = true;
+
+        public static HashSet<string> ExcludedCategories { get; set; } = new HashSet<string>
+        {
+            "LAYOUT", "TEXT"
+        };
 
         public static IDisposable BeginScope(string category, string enterText, Func<string> exitText = null, bool writeBraces = false)
         {
@@ -32,7 +38,7 @@ namespace StandaloneApp.UI
 
         public static void Write(string category, string text)
         {
-            if (IsEnabled)
+            if (IsEnabled && !ExcludedCategories.Contains(category))
                 Console.WriteLine($"[{category}] " + "".PadLeft(4 * _depth.Value) + text);
         }
 

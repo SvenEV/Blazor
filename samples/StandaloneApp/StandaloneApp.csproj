@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- For "dotnet watch"-support (see https://github.com/aspnet/Blazor/issues/5) -->
+    <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
+    <Watch Include="**\*.cshtml"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="UI\arial.ttf" />
   </ItemGroup>
 

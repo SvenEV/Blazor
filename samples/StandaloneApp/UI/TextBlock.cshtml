@@ -1,10 +1,9 @@
 ﻿@using SixLabors.Fonts
+@using Microsoft.AspNetCore.Blazor.Browser.Interop
 
 @inherits StandaloneApp.UI.UIElement
 
-<div style="@LayoutCss font-family: @FontFamily; font-size: @(FontSize)px; color: @Foreground; line-height: 1;
-     @((FontStyle == FontStyle.Italic || FontStyle == FontStyle.BoldItalic ? "font-style: italic;" : ""))
-     @((FontStyle == FontStyle.Bold || FontStyle == FontStyle.BoldItalic ? "font-weight: bold;" : ""))">
+<div style="@LayoutCss @StyleString">
 
     @Text
 </div>
@@ -26,34 +25,20 @@
         if (Text == null)
             return Point.Zero;
 
-        var font = GetFont((float)FontSize, FontStyle);
+        // TODO: Take Width/Height/MinMaxSize into account
+        var sizeString = RegisteredFunction.Invoke<string>("measureHtml", $"<div style=\"{StyleString}\">{Text}</div>");
+        var sizeParts = sizeString.Split(',');
+        var size = new Point(
+            Math.Ceiling(double.Parse(sizeParts[0])) + 1, 
+            Math.Ceiling(double.Parse(sizeParts[1])) + 1);
 
-        var size = TextMeasurer.Measure(Text, new RendererOptions(font)
-        {
-            WrappingWidth = (float)availableSize.X
-        });
+        UILog.Write("TEXT", $"Measured a size of {size} for text '{Text}'");
 
-        UILog.Write("TEXT", $"Measured a size of {new Point(size.Width, size.Height)} for text '{Text}'");
-
-        return new Point(size.Width, size.Height);
+        return size;
     }
 
-    private static readonly Dictionary<(float, FontStyle), Font> _fontCache = new Dictionary<(float, FontStyle), Font>();
-
-    private static Font GetFont(float size, FontStyle style)
-    {
-        if (_fontCache.TryGetValue((size, style), out var font))
-            return font;
-
-        UILog.Write("TEXT", $"Embedded resources: {string.Join(", ", System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceNames())}");
-        UILog.Write("TEXT", $"Size: {size}, Style: {style}");
-
-        var fontCollection = new FontCollection();
-        var fontStream = System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceStream("StandaloneApp.UI.arial.ttf");
-        fontCollection.Install(fontStream);
-        var fontFamily = fontCollection.Families.First();
-        var newFont = fontFamily.CreateFont(size * 1.026f, style); // 1.02 is enough in Chrome and Firefox, but not in Edge
-        _fontCache[(size, style)] = newFont;
-        return newFont;
-    }
+    private string StyleString =>
+        $"font-family: {FontFamily}; font-size: {FontSize}px; color: {Foreground};" +
+        (FontStyle == FontStyle.Italic || FontStyle == FontStyle.BoldItalic ? "font-style: italic;" : "") +
+        (FontStyle == FontStyle.Bold || FontStyle == FontStyle.BoldItalic ? "font-weight: bold;" : "");
 }
