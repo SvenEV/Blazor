@@ -18,6 +18,10 @@
 
     public FontStyle FontStyle { get; set; } = FontStyle.Normal;
 
+    public TextWrapping TextWrapping { get; set; } = TextWrapping.WrapWholeWords;
+
+    public TextTrimming TextTrimming { get; set; } = TextTrimming.None;
+
     public string Text { get; set; }
 
     protected override Point MeasureOverride(Point availableSize)
@@ -42,5 +46,8 @@
     private string StyleString =>
         $"font-family: {FontFamily}; font-size: {FontSize}px; color: {Foreground};" +
         $"font-weight: {(int)FontWeight};" +
-        $"font-style: {FontStyle.ToString().ToLower()};";
+        $"font-style: {FontStyle.ToString().ToLower()};" +
+        $"white-space: {(TextWrapping == TextWrapping.NoWrap ? "nowrap" : "pre-line")};" +
+        $"overflow-wrap: {(TextWrapping == TextWrapping.Wrap ? "break-word" : "normal")};" +
+        $"text-overflow: {(TextTrimming == TextTrimming.Ellipsis ? "ellipsis" : "clip")};";
 }
