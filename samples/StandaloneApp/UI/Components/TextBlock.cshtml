@@ -25,12 +25,14 @@
         if (Text == null)
             return Point.Zero;
 
-        // TODO: Take Width/Height/MinMaxSize into account
-        var sizeString = RegisteredFunction.Invoke<string>("measureHtml", $"<div style=\"{StyleString}\">{Text}</div>");
+        var sizeString = RegisteredFunction.Invoke<string>("measureHtml",
+            $"<div style=\"{StyleString} max-width: {availableSize.X}px; max-height: {availableSize.Y}px;\">{Text}</div>");
+
         var sizeParts = sizeString.Split(',');
-        var size = new Point(
+
+        var size = Point.Min(availableSize, new Point(
             Math.Ceiling(double.Parse(sizeParts[0])) + 1,
-            Math.Ceiling(double.Parse(sizeParts[1])) + 1);
+            Math.Ceiling(double.Parse(sizeParts[1])) + 1));
 
         UILog.Write("TEXT", $"Measured a size of {size} for text '{Text}'");
 
@@ -40,5 +42,5 @@
     private string StyleString =>
         $"font-family: {FontFamily}; font-size: {FontSize}px; color: {Foreground};" +
         $"font-weight: {(int)FontWeight};" +
-        $"font-style: {FontStyle.ToString().ToLower()}";
+        $"font-style: {FontStyle.ToString().ToLower()};";
 }
