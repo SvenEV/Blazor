@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace StandaloneApp.UI
 {
+    /// <summary>
+    /// Constants and static methods to simplify writing Xamzor views.
+    /// </summary>
     public static class Helpers
     {
         public static readonly Orientation Horizontal = Orientation.Horizontal;
@@ -28,9 +31,6 @@ namespace StandaloneApp.UI
 
         public static Thickness Thickness(double left, double top, double right, double bottom) =>
             new Thickness(left, top, right, bottom);
-
-        public static Point Size(double width, double height) =>
-            new Point(width, height);
 
         public static double Clamp(double value, double min, double max) =>
             value < min ? min : (value > max ? max : value);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static System.Math;
 
-namespace StandaloneApp.UI
+namespace StandaloneApp.UI.Components
 {
     public class UIElement : BlazorComponent
     {
