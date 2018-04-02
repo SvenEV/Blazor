@@ -21,7 +21,7 @@
     <!-- Xamzor script for measuring HTML content -->
     <script type="text/javascript">
         Blazor.registerFunction('measureHtml', (data) => {
-            var container = document.getElementById("xamzorMeasureContainer");
+            var container = document.getElementById('xamzorMeasureContainer');
 
             if (container == null)
                 return "0,0";
@@ -30,7 +30,7 @@
             var result = container.offsetWidth + "," + container.offsetHeight;
             container.innerHTML = "";
             return result;
-        })
+        });
     </script>
 </body>
 </html>

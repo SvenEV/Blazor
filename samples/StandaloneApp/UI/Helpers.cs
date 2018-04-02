@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace StandaloneApp.UI
@@ -28,5 +29,8 @@ namespace StandaloneApp.UI
 
         public static double OrIfNan(this double value, double fallbackValue) =>
             double.IsNaN(value) ? fallbackValue : value;
+
+        public static bool EqualsApprox(double a, double b, double tolerance = .001) =>
+            Math.Abs(a - b) <= tolerance;
     }
 }
