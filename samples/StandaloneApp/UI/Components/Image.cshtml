@@ -6,7 +6,7 @@
 
     public string Source { get; set; }
 
-    public Stretch Stretch { get; set; } = Stretch.Uniform;
+    public ImageStretch Stretch { get; set; } = ImageStretch.Uniform;
 
     public StretchDirection StretchDirection { get; set; } = StretchDirection.Both;
 
@@ -33,13 +33,13 @@
         return _imageSize * scaleFactor;
     }
 
-    private static Point ComputeScaleFactor(Point availableSize, Point contentSize, Stretch stretch, StretchDirection stretchDirection)
+    private static Point ComputeScaleFactor(Point availableSize, Point contentSize, ImageStretch stretch, StretchDirection stretchDirection)
     {
         var scale = Point.One;
         var isWidthConstrained = !double.IsPositiveInfinity(availableSize.X);
         var isHeightConstrained = !double.IsPositiveInfinity(availableSize.Y);
 
-        if (stretch != Stretch.None && (isWidthConstrained || isHeightConstrained))
+        if (stretch != ImageStretch.None && (isWidthConstrained || isHeightConstrained))
         {
             scale = new Point(
                 Helpers.EqualsApprox(0, contentSize.X) ? 0 : availableSize.X / contentSize.X,
@@ -57,11 +57,11 @@
             {
                 switch (stretch)
                 {
-                    case Stretch.Uniform:
+                    case ImageStretch.Uniform:
                         scale = Math.Min(scale.X, scale.Y) * Point.One;
                         break;
 
-                    case Stretch.UniformToFill:
+                    case ImageStretch.UniformToFill:
                         scale = Math.Max(scale.X, scale.Y) * Point.One;
                         break;
                 }

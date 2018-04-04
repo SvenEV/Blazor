@@ -12,7 +12,7 @@ namespace StandaloneApp.UI
 
         public static HashSet<string> ExcludedCategories { get; set; } = new HashSet<string>
         {
-            "LAYOUT", "TEXT"
+            "INIT", "LAYOUT", "TEXT", "IMAGE"
         };
 
         public static IDisposable BeginScope(string category, string enterText, Func<string> exitText = null, bool writeBraces = false)
