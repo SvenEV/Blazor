@@ -1,10 +1,12 @@
 ﻿@inherits UIElement
 
-<img style="@LayoutCss" src="@Source" />
+<img style="@LayoutCss" src="@Source" draggable="@IsDraggable" />
 
 @functions{
 
     public string Source { get; set; }
+
+    public bool IsDraggable { get; set; } = false;
 
     public ImageStretch Stretch { get; set; } = ImageStretch.Uniform;
 
