@@ -31,6 +31,45 @@
             container.innerHTML = "";
             return result;
         });
+
+        Blazor.registerFunction('measureImage', (source) => {
+            var img = document.createElement('img');
+            img.src = source;
+
+            img.onload = function () {
+                returnResult();
+                document.body.removeChild(img);
+            };
+
+            img.onerror = function () {
+                returnResult();
+                document.body.removeChild(img);
+            };
+
+            document.body.appendChild(img);
+
+            function returnResult() {
+                const assemblyName = 'StandaloneApp';
+                const namespace = 'StandaloneApp.UI';
+                const typeName = 'ImageMeasureInterop';
+                const methodName = 'NotifyImageMeasured';
+
+                const method = Blazor.platform.findMethod(
+                    assemblyName,
+                    namespace,
+                    typeName,
+                    methodName
+                );
+
+                let arg1AsDotNetString = Blazor.platform.toDotNetString(source);
+                let arg2AsDotNetString = Blazor.platform.toDotNetString(img.naturalWidth + ',' + img.naturalHeight);
+
+                let resultAsDotNetString = Blazor.platform.callMethod(method, null, [
+                    arg1AsDotNetString,
+                    arg2AsDotNetString
+                ]);
+            }
+        });
     </script>
 </body>
 </html>
