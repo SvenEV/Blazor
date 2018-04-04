@@ -27,7 +27,8 @@
                 return "0,0";
 
             container.innerHTML = data;
-            var result = container.offsetWidth + "," + container.offsetHeight;
+            var bounds = container.getBoundingClientRect();
+            var result = bounds.width + "," + bounds.height;
             container.innerHTML = "";
             return result;
         });
