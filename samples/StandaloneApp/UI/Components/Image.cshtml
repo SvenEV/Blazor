@@ -18,7 +18,7 @@
             return;
 
         _imageSize = await ImageMeasureInterop.MeasureImageAsync(Source);
-        XamzorView.Current.Layout();
+        RecalculateLayout();
     }
 
     protected override Point MeasureOverride(Point availableSize) =>

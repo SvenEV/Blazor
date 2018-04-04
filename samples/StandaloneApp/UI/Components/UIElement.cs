@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Blazor.Components;
 using System.Collections.Generic;
 using System.Linq;
-using static System.Math;
 
 namespace StandaloneApp.UI.Components
 {
@@ -55,8 +54,8 @@ namespace StandaloneApp.UI.Components
         protected override void OnInit()
         {
             UILog.Write("INIT", GetType().Name + " " + Tag + " initialized");
-            RenderHandle.ChildrenChanged += _ => XamzorView.Current?.Layout();
-            XamzorView.Current?.Layout();
+            RenderHandle.ChildrenChanged += _ => RecalculateLayout();
+            RecalculateLayout();
         }
 
         public Point Measure(Point availableSize)
@@ -218,6 +217,17 @@ namespace StandaloneApp.UI.Components
                 child.Arrange(new Rect(Point.Zero, finalSize));
 
             return finalSize;
+        }
+
+        protected void RecalculateLayout()
+        {
+            // Temporary solution to force a full recalculation of the XamzorView layout
+            var current = this;
+            while (current.Parent != null)
+                current = current.Parent;
+
+            if (current is XamzorView root)
+                root.Layout();
         }
 
         public override string ToString() => GetType().Name + " " + Tag;
