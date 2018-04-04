@@ -1,13 +1,10 @@
 ﻿@inherits UIElement
 
-<div style="@LayoutCss">
-
-    <div style="width: @(Bounds.Width)px; height: @(Bounds.Height)px;
-         background-color: @Background;
-         border-color: @BorderBrush; border-style: solid;
-         border-width: @(BorderThickness.Top)px @(BorderThickness.Right)px @(BorderThickness.Bottom)px @(BorderThickness.Left)px;
-         border-radius: @(CornerRadius.Top)px @(CornerRadius.Right)px @(CornerRadius.Bottom)px @(CornerRadius.Left)px;">
-    </div>
+<div style="@LayoutCss
+     background-color: @Background;
+     border-color: @BorderBrush; border-style: solid;
+     border-width: @(BorderThickness.Top)px @(BorderThickness.Right)px @(BorderThickness.Bottom)px @(BorderThickness.Left)px;
+     border-radius: @(CornerRadius.Top)px @(CornerRadius.Right)px @(CornerRadius.Bottom)px @(CornerRadius.Left)px;">
 
     @ChildContent
 </div>
@@ -34,8 +31,10 @@
 
     protected override Point ArrangeOverride(Point finalSize)
     {
+        // Note: Offset does not include BorderThickness.TopLeft as that is already
+        // accounted for by the HTML layout
         Children.FirstOrDefault()?.Arrange(new Rect(
-            Padding.TopLeft + BorderThickness.TopLeft,
+            Padding.TopLeft,
             finalSize - Padding.Size - BorderThickness.Size));
 
         return finalSize;
