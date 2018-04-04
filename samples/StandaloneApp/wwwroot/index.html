@@ -20,6 +20,12 @@
 
     <!-- Xamzor script for measuring HTML content -->
     <script type="text/javascript">
+        Blazor.registerFunction('getSize', (elementId) => {
+            var elem = document.getElementById(elementId);
+            var bounds = elem.getBoundingClientRect();
+            return bounds.width + "," + bounds.height;
+        });
+
         Blazor.registerFunction('measureHtml', (data) => {
             var container = document.getElementById('xamzorMeasureContainer');
 

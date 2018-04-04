@@ -1,21 +1,31 @@
-﻿@inherits UIElement
+﻿@using Microsoft.AspNetCore.Blazor.Browser.Interop
+@inherits UIElement
 
-<div style="position: relative; overflow: hidden; width: @(Width)px; height: @(Height)px; border: 1px solid black;">
+<div id="@Id" style="position: absolute; width: 100%; height: 100%;">
     @ChildContent
+    <button @onclick(Layout) style="position: absolute; left: 0px; top: 0px; opacity: 0.4;">Layout</button>
 </div>
 
 @functions{
 
-    public XamzorView()
-    {
-        Width = 800;
-        Height = 600;
-    }
+    public string Id { get; } = nameof(XamzorView) + "_" + Guid.NewGuid();
 
     public void Layout()
     {
         using (UILog.BeginScope("LAYOUT", "LAYOUT STARTING", writeBraces: true))
         {
+            try
+            {
+                var sizeString = RegisteredFunction.Invoke<string>("getSize", Id);
+                var sizeParts = sizeString.Split(',');
+                Width = double.Parse(sizeParts[0]);
+                Height = double.Parse(sizeParts[1]);
+            }
+            catch (JavaScriptException)
+            {
+                return; // Not yet rendered
+            }
+
             Measure(new Point(Width, Height));
             Arrange(new Rect(0, 0, Width, Height));
         }
