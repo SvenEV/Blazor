@@ -17,10 +17,10 @@ namespace StandaloneApp.UI
         public const Alignment Bottom = Alignment.End;
         public const Alignment Center = Alignment.Center;
         public const Alignment Stretch = Alignment.Stretch;
-        public const Stretch None = UI.Stretch.None;
-        public const Stretch Fill = UI.Stretch.Fill;
-        public const Stretch Uniform = UI.Stretch.Uniform;
-        public const Stretch UniformToFill = UI.Stretch.UniformToFill;
+        public const ImageStretch None = UI.ImageStretch.None;
+        public const ImageStretch Fill = UI.ImageStretch.Fill;
+        public const ImageStretch Uniform = UI.ImageStretch.Uniform;
+        public const ImageStretch UniformToFill = UI.ImageStretch.UniformToFill;
 
         public static IReadOnlyList<RowDefinition> Rows(params string[] sizeStrings) =>
             sizeStrings.Select(s => new RowDefinition(GridLength.Parse(s))).ToList();

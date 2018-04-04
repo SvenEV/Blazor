@@ -1,6 +1,6 @@
 ﻿namespace StandaloneApp.UI
 {
-    public enum Stretch
+    public enum ImageStretch
     {
         None, Fill, Uniform, UniformToFill
     }
