@@ -141,24 +141,34 @@ namespace StandaloneApp.UI.Components
             Point ComputeSize()
             {
                 // On 'Stretch' start with full available size, otherwise start with DesiredSize
-                var size = new Point(
-                    HorizontalAlignment == Alignment.Stretch ? availableSizeMinusMargins.X : Min(availableSizeMinusMargins.X, DesiredSize.X - Margin.HorizontalThickness),
-                    VerticalAlignment == Alignment.Stretch ? availableSizeMinusMargins.Y : Min(availableSizeMinusMargins.Y, DesiredSize.Y - Margin.VerticalThickness));
+                var arrangeSize = new Point(
+                    HorizontalAlignment == Alignment.Stretch ? availableSizeMinusMargins.X : DesiredSize.X,
+                    VerticalAlignment == Alignment.Stretch ? availableSizeMinusMargins.Y : DesiredSize.Y);
 
                 // Effective min/max size accounts for explicitly set Width/Height
                 var effectiveMinSize = Point.Clamp(Size.OrWhereNaN(Point.Zero), MinSize, MaxSize);
                 var effectiveMaxSize = Point.Clamp(Size.OrWhereNaN(Point.PositiveInfinity), MinSize, MaxSize);
-                size = Point.Clamp(size, effectiveMinSize, effectiveMaxSize);
+                arrangeSize = Point.Clamp(arrangeSize, effectiveMinSize, effectiveMaxSize);
 
-                size = Point.Min(ArrangeOverride(size), size);
-                return size;
+                // Note: Returned size may exceed available size so that content gets clipped
+                return Point.Clamp(ArrangeOverride(arrangeSize), effectiveMinSize, effectiveMaxSize);
             }
 
             Point ComputeOffset(Point size)
             {
+                // If size returned by ArrangeOverride() exceeds available space,
+                // content will be clipped and we fall back to top/left alignment
+                var effectiveHAlign = (HorizontalAlignment == Alignment.Stretch && size.X > availableSizeMinusMargins.X)
+                    ? Alignment.Start
+                    : HorizontalAlignment;
+
+                var effectiveVAlign = (VerticalAlignment == Alignment.Stretch && size.Y > availableSizeMinusMargins.Y)
+                    ? Alignment.Start
+                    : VerticalAlignment;
+
                 var offset = finalRect.TopLeft + Margin.TopLeft;
 
-                switch (HorizontalAlignment)
+                switch (effectiveHAlign)
                 {
                     case Alignment.Center:
                     case Alignment.Stretch:
@@ -170,7 +180,7 @@ namespace StandaloneApp.UI.Components
                         break;
                 }
 
-                switch (VerticalAlignment)
+                switch (effectiveVAlign)
                 {
                     case Alignment.Center:
                     case Alignment.Stretch:

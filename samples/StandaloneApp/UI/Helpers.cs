@@ -9,14 +9,18 @@ namespace StandaloneApp.UI
     /// </summary>
     public static class Helpers
     {
-        public static readonly Orientation Horizontal = Orientation.Horizontal;
-        public static readonly Orientation Vertical = Orientation.Vertical;
-        public static readonly Alignment Left = Alignment.Start;
-        public static readonly Alignment Top = Alignment.Start;
-        public static readonly Alignment Right = Alignment.End;
-        public static readonly Alignment Bottom = Alignment.End;
-        public static readonly Alignment Center = Alignment.Center;
-        public static readonly Alignment Stretch = Alignment.Stretch;
+        public const Orientation Horizontal = Orientation.Horizontal;
+        public const Orientation Vertical = Orientation.Vertical;
+        public const Alignment Left = Alignment.Start;
+        public const Alignment Top = Alignment.Start;
+        public const Alignment Right = Alignment.End;
+        public const Alignment Bottom = Alignment.End;
+        public const Alignment Center = Alignment.Center;
+        public const Alignment Stretch = Alignment.Stretch;
+        public const Stretch None = UI.Stretch.None;
+        public const Stretch Fill = UI.Stretch.Fill;
+        public const Stretch Uniform = UI.Stretch.Uniform;
+        public const Stretch UniformToFill = UI.Stretch.UniformToFill;
 
         public static IReadOnlyList<RowDefinition> Rows(params string[] sizeStrings) =>
             sizeStrings.Select(s => new RowDefinition(GridLength.Parse(s))).ToList();
