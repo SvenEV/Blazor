@@ -1,0 +1,18 @@
+﻿@inherits UIElement
+
+<div style="@LayoutCss @StyleString">
+    @ChildContent
+</div>
+
+@functions{
+
+    public Thickness Padding { get; set; } = Thickness.Zero;
+
+    public ScrollMode HorizontalScrollMode { get; set; } = ScrollMode.Disabled;
+
+    public ScrollMode VerticalScrollMode { get; set; } = ScrollMode.Auto;
+    
+    private string StyleString =>
+        $"overflow-x: {(HorizontalScrollMode == ScrollMode.Disabled ? "hidden" : HorizontalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};" +
+        $"overflow-y: {(VerticalScrollMode == ScrollMode.Disabled ? "hidden" : VerticalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};";
+}

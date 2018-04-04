@@ -9,38 +9,40 @@
         <Border Tag="Outer2" Background="Green" Row="1" BorderThickness="1" BorderBrush="Black" />
         <Border Tag="Outer3" Background="Blue" Column="1" BorderThickness="1" BorderBrush="Black" />
 
-        <StackPanel Row="1" Column="1" Tag="OuterStack">
+        <ScrollViewer Row="1" Column="1">
+            <StackPanel Tag="OuterStack">
 
-            <Border Tag="VerticallyStacked1" Background="Red" Width="200" Height="40" />
-            <Border Tag="VerticallyStacked2" Background="DarkRed" MaxWidth="300" Height="40" Margin="350,10" />
-            <Border Tag="VerticallyStacked3" Background="DarkRed" MaxWidth="300" Height="40" />
-            <Border Tag="VerticallyStacked4" Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Left" />
-            <Border Tag="VerticallyStacked5" Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Center" />
-            <Border Tag="VerticallyStacked6" Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Right" />
+                <Border Tag="VerticallyStacked1" Background="Red" Width="200" Height="40" />
+                <Border Tag="VerticallyStacked2" Background="DarkRed" MaxWidth="300" Height="40" Margin="350,10" />
+                <Border Tag="VerticallyStacked3" Background="DarkRed" MaxWidth="300" Height="40" />
+                <Border Tag="VerticallyStacked4" Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Left" />
+                <Border Tag="VerticallyStacked5" Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Center" />
+                <Border Tag="VerticallyStacked6" Background="DarkRed" Width="200" Height="40" HorizontalAlignment="Right" />
 
-            <Border Tag="VerticallyStacked7 (with children)" BorderBrush="DarkGreen" BorderThickness="10" Padding="10" CornerRadius="20"
-                    HorizontalAlignment="Stretch" Width="400">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Tag="InnerStack">
-                    <Border Width="50" Height="50" Background="Green" Tag="Inner1" />
-                    <Border Width="50" Height="50" Background="Green" Tag="Inner2" />
-                    <Border Width="50" Height="50" Background="Green" Tag="Inner3" />
+                <Border Tag="VerticallyStacked7 (with children)" BorderBrush="DarkGreen" BorderThickness="10" Padding="10" CornerRadius="20"
+                        HorizontalAlignment="Stretch" Width="400">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Tag="InnerStack">
+                        <Border Width="50" Height="50" Background="Green" Tag="Inner1" />
+                        <Border Width="50" Height="50" Background="Green" Tag="Inner2" />
+                        <Border Width="50" Height="50" Background="Green" Tag="Inner3" />
+                    </StackPanel>
+                </Border>
+
+                <StackPanel>
+                    <Border Tag="TextContainer" BorderBrush="Red" BorderThickness="1" HorizontalAlignment="Center">
+                        <TextBlock Tag="TheText1" Text="Hello World" />
+                    </Border>
+                    <Border Tag="TextContainer" BorderBrush="Red" BorderThickness="1" HorizontalAlignment="Center">
+                        <TextBlock Tag="TheText2" Text="Hello World Hello World Hello World Hello World Hello World" FontSize="8" />
+                    </Border>
+                    <Border Tag="TextContainer" BorderBrush="Red" BorderThickness="1" HorizontalAlignment="Center">
+                        <TextBlock Tag="TheText1" Text="Hello Wgrld" FontSize="72"
+                                   FontWeight="@FontWeight.ExtraBlack" FontStyle="@FontStyle.Italic" />
+                    </Border>
                 </StackPanel>
-            </Border>
 
-            <StackPanel>
-                <Border Tag="TextContainer" BorderBrush="Red" BorderThickness="1" HorizontalAlignment="Center">
-                    <TextBlock Tag="TheText1" Text="Hello World" />
-                </Border>
-                <Border Tag="TextContainer" BorderBrush="Red" BorderThickness="1" HorizontalAlignment="Center">
-                    <TextBlock Tag="TheText2" Text="Hello World Hello World Hello World Hello World Hello World" FontSize="8" />
-                </Border>
-                <Border Tag="TextContainer" BorderBrush="Red" BorderThickness="1" HorizontalAlignment="Center">
-                    <TextBlock Tag="TheText1" Text="Hello Wgrld" FontSize="72"
-                               FontWeight="@FontWeight.ExtraBlack" FontStyle="@FontStyle.Italic"/>
-                </Border>
             </StackPanel>
-
-        </StackPanel>
+        </ScrollViewer>
 
     </Grid>
 
