@@ -37,12 +37,18 @@ namespace StandaloneApp.UI
         public Point OrWhereNaN(Point fallbackValue) =>
             new Point(X.OrIfNan(fallbackValue.X), Y.OrIfNan(fallbackValue.Y));
 
+        public override bool Equals(object obj) => base.Equals(obj);
+        public override int GetHashCode() => base.GetHashCode();
+
         public static Point operator +(Point a, Point b) => new Point(a.X + b.X, a.Y + b.Y);
         public static Point operator -(Point a, Point b) => a + -b;
         public static Point operator -(Point p) => new Point(-p.X, -p.Y);
         public static Point operator *(Point a, Point b) => new Point(a.X * b.X, a.Y * b.Y);
         public static Point operator *(double d, Point p) => new Point(d * p.X, d * p.Y);
         public static Point operator *(Point p, double d) => new Point(d * p.X, d * p.Y);
+
+        public static bool operator ==(Point a, Point b) => a.Equals(b);
+        public static bool operator !=(Point a, Point b) => !a.Equals(b);
 
         public static Point Min(Point a, Point b) => new Point(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
         public static Point Max(Point a, Point b) => new Point(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));

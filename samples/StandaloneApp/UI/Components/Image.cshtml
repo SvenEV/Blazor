@@ -1,5 +1,4 @@
 ﻿@inherits UIElement
-@inject HttpClient Http
 
 <img style="@LayoutCss" src="@Source" />
 
@@ -15,27 +14,11 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(Source))
-                return;
+        if (_imageSize != Point.Zero || string.IsNullOrWhiteSpace(Source))
+            return;
 
-            var err = await Http.GetStringAsync(Source);
-            UILog.Write("IMAGE", $"Error info: " + err);
-
-            using (var stream = await Http.GetStreamAsync(Source))
-            {
-                UILog.Write("IMAGE", $"Got stream for '{Source}': {stream.Length} bytes");
-                var imageInfo = SixLabors.ImageSharp.Image.Identify(stream);
-                UILog.Write("IMAGE", $"Got image info '{Source}'");
-                _imageSize = new Point(imageInfo.Width, imageInfo.Height);
-                UILog.Write("IMAGE", $"Image size is {_imageSize} for '{Source}'");
-            }
-        }
-        catch (Exception e)
-        {
-            UILog.Write("IMAGE", $"Failed to load image: '{Source}'. {e}");
-        }
+        _imageSize = await ImageMeasureInterop.MeasureImageAsync(Source);
+        XamzorView.Current.Layout();
     }
 
     protected override Point MeasureOverride(Point availableSize) =>
