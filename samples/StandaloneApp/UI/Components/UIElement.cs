@@ -55,7 +55,6 @@ namespace StandaloneApp.UI.Components
         {
             UILog.Write("INIT", GetType().Name + " " + Tag + " initialized");
             RenderHandle.ChildrenChanged += _ => RecalculateLayout();
-            RecalculateLayout();
         }
 
         public Point Measure(Point availableSize)
