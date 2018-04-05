@@ -6,13 +6,15 @@
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/site.css" rel="stylesheet" />
+    <link href="Xamzor.css" rel="stylesheet" />
 </head>
 <body>
-    <app>Loading...</app>
-
-    <div id="xamzorMeasureContainer" style="display: inline-block; visibility: hidden;">
-        <!-- function "measureHtml will temporarily place elements here to measure them -->
-    </div>
+    <app>
+        <div class="appload-container" style="background-color: black;">
+            <div class="appload"></div>
+            <img src="SplashScreen.png" width="200"/>
+        </div>
+    </app>
 
     <script src="css/bootstrap/bootstrap-native.min.js"></script>
     <script type="blazor-boot"></script>

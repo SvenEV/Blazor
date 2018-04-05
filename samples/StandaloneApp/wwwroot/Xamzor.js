@@ -7,8 +7,12 @@
 Blazor.registerFunction('measureHtml', (data) => {
     var container = document.getElementById('xamzorMeasureContainer');
 
-    if (container == null)
-        return "0,0";
+    if (container == null) {
+        container = document.createElement('div');
+        container.style = 'display: inline-block; visibility: hidden;';
+        container.id = 'xamzorMeasureContainer';
+        document.body.appendChild(container);
+    }
 
     container.innerHTML = data;
     var bounds = container.getBoundingClientRect();
