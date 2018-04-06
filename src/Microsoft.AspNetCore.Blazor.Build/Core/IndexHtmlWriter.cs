@@ -19,10 +19,8 @@ namespace Microsoft.AspNetCore.Blazor.Build
             string path,
             string assemblyPath,
             IEnumerable<string> assemblyReferences,
-            IEnumerable<string> jsReferences,
-            IEnumerable<string> cssReferences,
+            IEnumerable<string> embeddedResourcesSources,
             bool linkerEnabled,
-            string reloadUri,
             string outputPath)
         {
             var template = GetTemplate(path);
@@ -32,7 +30,9 @@ namespace Microsoft.AspNetCore.Blazor.Build
             }
             var assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
             var entryPoint = GetAssemblyEntryPoint(assemblyPath);
-            var updatedContent = GetIndexHtmlContents(template, assemblyName, entryPoint, assemblyReferences, jsReferences, cssReferences, linkerEnabled, reloadUri);
+            var embeddedContent = EmbeddedResourcesProcessor.ExtractEmbeddedResources(
+                embeddedResourcesSources, Path.GetDirectoryName(outputPath));
+            var updatedContent = GetIndexHtmlContents(template, assemblyName, entryPoint, assemblyReferences, embeddedContent, linkerEnabled);
             var normalizedOutputPath = Normalize(outputPath);
             Console.WriteLine("Writing index to: " + normalizedOutputPath);
             File.WriteAllText(normalizedOutputPath, updatedContent);
@@ -102,10 +102,8 @@ namespace Microsoft.AspNetCore.Blazor.Build
             string assemblyName,
             string assemblyEntryPoint,
             IEnumerable<string> assemblyReferences,
-            IEnumerable<string> jsReferences,
-            IEnumerable<string> cssReferences,
-            bool linkerEnabled,
-            string reloadUri)
+            IEnumerable<EmbeddedResourceInfo> embeddedContent,
+            bool linkerEnabled)
         {
             var resultBuilder = new StringBuilder();
 
@@ -120,10 +118,11 @@ namespace Microsoft.AspNetCore.Blazor.Build
             while (true)
             {
                 var token = tokenizer.Get();
+                var tokenCharIndex = token.Position.Position - 1;
                 if (resumeOnNextToken)
                 {
                     resumeOnNextToken = false;
-                    currentRangeStartPos = token.Position.Position;
+                    currentRangeStartPos = tokenCharIndex;
                 }
 
                 switch (token.Type)
@@ -136,7 +135,7 @@ namespace Microsoft.AspNetCore.Blazor.Build
                             {
                                 // First, emit the original source text prior to this special tag, since
                                 // we want that to be unchanged
-                                resultBuilder.Append(htmlTemplate, currentRangeStartPos, token.Position.Position - currentRangeStartPos - 1);
+                                resultBuilder.Append(htmlTemplate, currentRangeStartPos, tokenCharIndex - currentRangeStartPos);
 
                                 // Instead of emitting the source text for this special tag, emit a fully-
                                 // configured Blazor boot script tag
@@ -146,17 +145,16 @@ namespace Microsoft.AspNetCore.Blazor.Build
                                     assemblyEntryPoint,
                                     assemblyReferences,
                                     linkerEnabled,
-                                    tag.Attributes,
-                                    reloadUri);
+                                    tag.Attributes);
 
                                 // Emit tags to reference any specified JS/CSS files
                                 AppendReferenceTags(
                                     resultBuilder,
-                                    cssReferences,
+                                    embeddedContent.Where(c => c.Kind == EmbeddedResourceKind.Css).Select(c => c.RelativePath),
                                     "<link rel=\"stylesheet\" href=\"{0}\" />");
                                 AppendReferenceTags(
                                     resultBuilder,
-                                    jsReferences,
+                                    embeddedContent.Where(c => c.Kind == EmbeddedResourceKind.JavaScript).Select(c => c.RelativePath),
                                     "<script src=\"{0}\" defer></script>");
 
                                 // Set a flag so we know not to emit anything else until the special
@@ -209,8 +207,7 @@ namespace Microsoft.AspNetCore.Blazor.Build
             string assemblyEntryPoint,
             IEnumerable<string> binFiles,
             bool linkerEnabled,
-            List<KeyValuePair<string, string>> attributes,
-            string reloadUri)
+            List<KeyValuePair<string, string>> attributes)
         {
             var assemblyNameWithExtension = $"{assemblyName}.dll";
 
@@ -230,11 +227,6 @@ namespace Microsoft.AspNetCore.Blazor.Build
             else
             {
                 attributesDict.Remove("linker-enabled");
-            }
-
-            if (!string.IsNullOrEmpty(reloadUri))
-            {
-                attributesDict["reload"] = reloadUri;
             }
 
             resultBuilder.Append("<script");
