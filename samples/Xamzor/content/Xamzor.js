@@ -39,8 +39,8 @@ Blazor.registerFunction('measureImage', (source) => {
     document.body.appendChild(img);
 
     function returnResult() {
-        const assemblyName = 'StandaloneApp';
-        const namespace = 'StandaloneApp.UI';
+        const assemblyName = 'Xamzor';
+        const namespace = 'Xamzor.UI';
         const typeName = 'ImageMeasureInterop';
         const methodName = 'NotifyImageMeasured';
 

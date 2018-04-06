@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StandaloneApp.UI
+namespace Xamzor.UI
 {
     public class LayoutException : InvalidOperationException
     {

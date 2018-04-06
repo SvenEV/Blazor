@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Blazor.Components;
 using System.Collections.Generic;
 using System.Linq;
+using Xamzor.UI.Components;
 
-namespace StandaloneApp.UI.Components
+namespace Xamzor.UI.Components
 {
     public class UIElement : BlazorComponent
     {

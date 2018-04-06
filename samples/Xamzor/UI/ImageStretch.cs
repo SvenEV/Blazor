@@ -1,4 +1,4 @@
-﻿namespace StandaloneApp.UI
+﻿namespace Xamzor.UI
 {
     public enum ImageStretch
     {

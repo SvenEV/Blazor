@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace StandaloneApp.UI
+namespace Xamzor.UI
 {
     /// <summary>
     /// Constants and static methods to simplify writing Xamzor views.

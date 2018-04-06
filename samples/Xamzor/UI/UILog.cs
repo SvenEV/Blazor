@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace StandaloneApp.UI
+namespace Xamzor.UI
 {
     public static class UILog
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace StandaloneApp.UI
+namespace Xamzor.UI
 {
     public class ImageMeasureInterop
     {
