@@ -1,0 +1,31 @@
+﻿@inherits UIElement
+
+<div style="@LayoutCss" onclick="@OnClicked">
+    @ChildContent
+</div>
+
+@functions{
+
+    public Thickness Padding { get; set; } = Thickness.Zero;
+
+    public event EventHandler Clicked;
+
+    protected override Point MeasureOverride(Point availableSize)
+    {
+        var childSize = Children.FirstOrDefault()?
+            .Measure(availableSize - Padding.Size) ?? Point.Zero;
+
+        return childSize + Padding.Size;
+    }
+
+    protected override Point ArrangeOverride(Point finalSize)
+    {
+        Children.FirstOrDefault()?.Arrange(new Rect(
+            Padding.TopLeft,
+            finalSize - Padding.Size);
+
+        return finalSize;
+    }
+
+    private void OnClicked() => Clicked?.Invoke(this, EventArgs.Empty);
+}

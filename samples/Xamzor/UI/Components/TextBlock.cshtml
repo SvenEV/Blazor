@@ -50,5 +50,5 @@
         $"white-space: {(TextWrapping == TextWrapping.NoWrap ? "nowrap" : "pre-line")};" +
         $"overflow-wrap: {(TextWrapping == TextWrapping.Wrap ? "break-word" : "normal")};" +
         $"text-overflow: {(TextTrimming == TextTrimming.Ellipsis ? "ellipsis" : "clip")};" +
-        (IsTextSelectionEnabled ? "" : "user-select: none; -ms-user-select: none;");
+        (IsTextSelectionEnabled ? "" : "user-select: none; -ms-user-select: none; cursor: default;");
 }
