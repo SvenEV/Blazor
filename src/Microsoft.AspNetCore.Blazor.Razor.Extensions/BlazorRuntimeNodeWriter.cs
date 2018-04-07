@@ -506,7 +506,7 @@ namespace Microsoft.AspNetCore.Blazor.Razor
                 // This allows us to do things like:
                 //       <Border Margin="10,0">...
                 //  -->  'builder.AddAttribute(17, "Margin", (Thickness)(10, 0))'
-                context.CodeWriter.Write("(" + node.BoundAttribute.TypeName + ")");
+                context.CodeWriter.Write("(" + node.BoundAttribute.TypeName + ")(");
 
                 // We don't allow mixed content in component attributes. If this happens, then
                 // we should make sure that all of the tokens are the same kind. We report an
@@ -522,6 +522,8 @@ namespace Microsoft.AspNetCore.Blazor.Razor
 
                     context.CodeWriter.Write(token.Content);
                 }
+
+                context.CodeWriter.Write(")");
             }
             else if (node.Children[0] is HtmlContentIntermediateNode htmlNode)
             {
