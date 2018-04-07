@@ -1,12 +1,14 @@
 ﻿@inherits UIElement
 
-<div style="@LayoutCss">
+<div style="@LayoutCss background-color: @Background;">
     @ChildContent
 </div>
 
 @functions{
 
     public Orientation Orientation { get; set; } = Orientation.Vertical;
+
+    public string Background { get; set; } = "transparent";
 
     public double Spacing { get; set; } = 0;
 
