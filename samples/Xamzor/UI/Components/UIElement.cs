@@ -55,7 +55,6 @@ namespace Xamzor.UI.Components
         protected override void OnInit()
         {
             UILog.Write("INIT", GetType().Name + " " + Tag + " initialized");
-            RenderHandle.ChildrenChanged += _ => RecalculateLayout();
         }
 
         public Point Measure(Point availableSize)

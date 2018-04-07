@@ -21,7 +21,7 @@
             return;
 
         _imageSize = await ImageMeasureInterop.MeasureImageAsync(Source);
-        RecalculateLayout();
+        // TODO: recalculate layout efficiently
     }
 
     protected override Point MeasureOverride(Point availableSize) =>
