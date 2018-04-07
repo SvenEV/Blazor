@@ -8,7 +8,8 @@
 
     public Thickness Padding { get; set; } = Thickness.Zero;
 
-    public event EventHandler Clicked;
+    // This is a property because adding handlers to events via tag helpers doesn't seem to be supported yet
+    public EventHandler<UIMouseEventArgs> Clicked { get; set; }
 
     protected override Point MeasureOverride(Point availableSize)
     {
@@ -22,10 +23,10 @@
     {
         Children.FirstOrDefault()?.Arrange(new Rect(
             Padding.TopLeft,
-            finalSize - Padding.Size);
+            finalSize - Padding.Size));
 
         return finalSize;
     }
 
-    private void OnClicked() => Clicked?.Invoke(this, EventArgs.Empty);
+    private void OnClicked(UIMouseEventArgs e) => Clicked?.Invoke(this, e);
 }
