@@ -1,4 +1,19 @@
-﻿.appload-container {
+﻿.XButton {
+    background: none;
+    border: none;
+    transition: transform .3s;
+}
+
+.XButton:hover {
+    opacity: .8;
+}
+
+.XButton:active {
+    transform: scale(.95);
+    transition: transform .1s;
+}
+
+.appload-container {
     position: absolute;
     width: 100%;
     height: 100%;
