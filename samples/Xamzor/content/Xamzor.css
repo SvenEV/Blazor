@@ -1,16 +1,27 @@
-﻿.XButton {
+﻿body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* prevents overscrolling */
+}
+
+.XButton {
     background: none;
     border: none;
     transition: transform .3s;
 }
 
 .XButton:hover {
-    opacity: .8;
+    background-color: rgba(255, 255, 255, .078);
 }
 
 .XButton:active {
+    background-color: rgba(255, 255, 255, .16);
     transform: scale(.95);
     transition: transform .1s;
+}
+
+.XButton:focus {
+    outline: none;
 }
 
 .appload-container {
