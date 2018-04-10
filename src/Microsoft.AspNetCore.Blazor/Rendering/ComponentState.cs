@@ -4,7 +4,6 @@
 using Microsoft.AspNetCore.Blazor.Components;
 using Microsoft.AspNetCore.Blazor.RenderTree;
 using System;
-using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Blazor.Rendering
 {
@@ -18,7 +17,6 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
         private readonly int _componentId; // TODO: Change the type to 'long' when the Mono runtime has more complete support for passing longs in .NET->JS calls
         private readonly IComponent _component;
         private readonly Renderer _renderer;
-        
         private RenderTreeBuilder _renderTreeBuilderCurrent;
         private RenderTreeBuilder _renderTreeBuilderPrevious;
         private bool _componentWasDisposed;
@@ -29,7 +27,6 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
         /// <param name="renderer">The <see cref="Renderer"/> with which the new instance should be associated.</param>
         /// <param name="componentId">The externally visible identifier for the <see cref="IComponent"/>. The identifier must be unique in the context of the <see cref="Renderer"/>.</param>
         /// <param name="component">The <see cref="IComponent"/> whose state is being tracked.</param>
-        /// 
         public ComponentState(Renderer renderer, int componentId, IComponent component)
         {
             _componentId = componentId;

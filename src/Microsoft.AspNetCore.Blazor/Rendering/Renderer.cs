@@ -201,8 +201,7 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
             while (_batchBuilder.ComponentDisposalQueue.Count > 0)
             {
                 var disposeComponentId = _batchBuilder.ComponentDisposalQueue.Dequeue();
-                var disposeComponentState = GetRequiredComponentState(disposeComponentId);
-                disposeComponentState.DisposeInBatch(_batchBuilder);
+                GetRequiredComponentState(disposeComponentId).DisposeInBatch(_batchBuilder);
                 _componentStateById.Remove(disposeComponentId);
                 _batchBuilder.DisposedComponentIds.Append(disposeComponentId);
             }

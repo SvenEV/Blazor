@@ -3,8 +3,6 @@
 
 using Microsoft.AspNetCore.Blazor.Rendering;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.AspNetCore.Blazor.Components
 {
@@ -15,7 +13,7 @@ namespace Microsoft.AspNetCore.Blazor.Components
     {
         private readonly Renderer _renderer;
         private readonly int _componentId;
-        
+
         internal RenderHandle(Renderer renderer, int componentId)
         {
             _renderer = renderer ?? throw new System.ArgumentNullException(nameof(renderer));
