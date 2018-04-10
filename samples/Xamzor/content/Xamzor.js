@@ -60,3 +60,33 @@ Blazor.registerFunction('measureImage', (source) => {
         ]);
     }
 });
+
+function xamzorInitRoot(self) {
+    xamzorInit(self);
+    window.addEventListener('resize', function () {
+        xamzorInvokeCSharpMethod('Xamzor.UI', 'Hierarchy', 'NotifyWindowResized');
+    })
+}
+
+// Dispatches an event to notify parent component of a new child component
+function xamzorInit(self) {
+    self.parentNode.addEventListener('xamzorInitialized', e => {
+        if (e.target.id == self.id)
+            return true; // ignore own event
+
+        xamzorInvokeCSharpMethod('Xamzor.UI', 'Hierarchy', 'AddRelation', [self.id, e.target.id]);
+        e.stopPropagation();
+    });
+
+    var event = new Event('xamzorInitialized', { bubbles: true });
+    self.dispatchEvent(event);
+}
+
+function xamzorInvokeCSharpMethod(namespace, typeName, methodName, args) {
+    const assemblyName = 'Xamzor';
+    const method = Blazor.platform.findMethod(assemblyName, namespace, typeName, methodName);
+    var csArgs = [];
+    if (args)
+        args.forEach(arg => csArgs.push(Blazor.platform.toDotNetString(arg)));
+    let resultAsDotNetString = Blazor.platform.callMethod(method, null, csArgs);
+}

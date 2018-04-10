@@ -33,8 +33,6 @@ namespace Microsoft.AspNetCore.Blazor.Components
         private bool _hasNeverRendered = true;
         private bool _hasPendingQueuedRender;
 
-        protected RenderHandle RenderHandle => _renderHandle;
-
         public BlazorComponent()
         {
             _renderFragment = BuildRenderTree;

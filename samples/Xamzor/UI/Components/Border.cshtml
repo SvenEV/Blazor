@@ -6,6 +6,8 @@
      border-width: @(BorderThickness.Top)px @(BorderThickness.Right)px @(BorderThickness.Bottom)px @(BorderThickness.Left)px;
      border-radius: @(CornerRadius.Top)px @(CornerRadius.Right)px @(CornerRadius.Bottom)px @(CornerRadius.Left)px;">
 
+    <img id="@Id" onerror="xamzorInit(this);" src/>
+
     @ChildContent
 </div>
 
@@ -23,7 +25,7 @@
 
     protected override Point MeasureOverride(Point availableSize)
     {
-        var childSize = Children.FirstOrDefault()?
+        var childSize = this.Children().FirstOrDefault()?
             .Measure(availableSize - Padding.Size - BorderThickness.Size) ?? Point.Zero;
 
         return childSize + Padding.Size + BorderThickness.Size;
@@ -33,7 +35,7 @@
     {
         // Note: Offset does not include BorderThickness.TopLeft as that is already
         // accounted for by the HTML layout
-        Children.FirstOrDefault()?.Arrange(new Rect(
+        this.Children().FirstOrDefault()?.Arrange(new Rect(
             Padding.TopLeft,
             finalSize - Padding.Size - BorderThickness.Size));
 

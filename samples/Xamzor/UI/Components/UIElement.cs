@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Xamzor.UI.Components;
 
 namespace Xamzor.UI.Components
 {
     public class UIElement : BlazorComponent
     {
         public string LayoutCss => $"position: absolute; overflow: hidden; left: {Bounds.X}px; top: {Bounds.Y}px; width: {Bounds.Width}px; height: {Bounds.Height}px; ";
+
+        public string Id { get; }
 
         public RenderFragment ChildContent { get; set; }
 
@@ -42,29 +44,25 @@ namespace Xamzor.UI.Components
 
         public Rect Bounds { get; private set; } // size excludes margins, computed by Arrange()
 
-        public UIElement Parent => RenderHandle.GetParent() as UIElement;
-
-        public IEnumerable<UIElement> Children => RenderHandle.GetChildren().OfType<UIElement>();
-
         // Temporary properties - we'll invent some form of "attached properties" in the future
         public int Row { get; set; } = 0;
         public int Column { get; set; } = 0;
         public int RowSpan { get; set; } = 1;
         public int ColumnSpan { get; set; } = 1;
 
+        public UIElement()
+        {
+            Id = GetType().Name + "_" + Guid.NewGuid().ToString();
+        }
+
         protected override void OnInit()
         {
+            Hierarchy.RegisterElement(this);
             UILog.Write("INIT", GetType().Name + " " + Tag + " initialized");
         }
 
         public Point Measure(Point availableSize)
         {
-            if (!RenderHandle.IsInitialized)
-            {
-                UILog.Write("LAYOUT", $"{GetType().Name}.Measure({availableSize}) returned early - RenderHandle not initialized");
-                return Point.Zero;
-            }
-
             if (IsInvalidInput(availableSize))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Measure': {availableSize}");
 
@@ -93,9 +91,6 @@ namespace Xamzor.UI.Components
 
         public Rect Arrange(Rect finalRect)
         {
-            if (!RenderHandle.IsInitialized)
-                return default;
-
             if (IsInvalidInput(finalRect))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Arrange': {finalRect}");
 
@@ -200,7 +195,7 @@ namespace Xamzor.UI.Components
             // By default: Return bounding box size of all children positioned at (0, 0)
             var size = Point.Zero;
 
-            foreach (var child in Children)
+            foreach (var child in this.Children())
             {
                 child.Measure(availableSize);
                 size = Point.Max(size, child.DesiredSize);
@@ -212,7 +207,7 @@ namespace Xamzor.UI.Components
         protected virtual Point ArrangeOverride(Point finalSize)
         {
             // By default: Position all children at (0, 0)
-            foreach (var child in Children)
+            foreach (var child in this.Children())
                 child.Arrange(new Rect(Point.Zero, finalSize));
 
             return finalSize;
@@ -222,8 +217,8 @@ namespace Xamzor.UI.Components
         {
             // Temporary solution to force a full recalculation of the XamzorView layout
             var current = this;
-            while (current.Parent != null)
-                current = current.Parent;
+            while (current.Parent() != null)
+                current = current.Parent();
 
             if (current is XamzorView root)
                 root.Layout();

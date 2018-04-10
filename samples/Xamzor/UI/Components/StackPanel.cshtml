@@ -1,6 +1,7 @@
 ﻿@inherits UIElement
 
 <div class="StackPanel" style="@LayoutCss background-color: @Background;">
+    <img id="@Id" onerror="xamzorInit(this);" src/>
     @ChildContent
 </div>
 
@@ -26,7 +27,7 @@
 
             var measuredSize = Point.Zero;
 
-            foreach (var child in Children)
+            foreach (var child in this.Children())
             {
                 child.Measure(childAvailableSize);
                 measuredSize = new Point(
@@ -45,7 +46,7 @@
 
             var measuredSize = Point.Zero;
 
-            foreach (var child in Children)
+            foreach (var child in this.Children())
             {
                 child.Measure(childAvailableSize);
                 measuredSize = new Point(
@@ -67,7 +68,7 @@
         {
             var arrangedSize = new Point(finalSize.X, 0);
 
-            foreach (var child in Children)
+            foreach (var child in this.Children())
             {
                 var childSize = child.DesiredSize;
                 child.Arrange(new Rect(0, arrangedSize.Y, Max(childSize.X, arrangedSize.X), childSize.Y));
@@ -83,7 +84,7 @@
         {
             var arrangedSize = new Point(0, finalSize.Y);
 
-            foreach (var child in Children)
+            foreach (var child in this.Children())
             {
                 var childSize = child.DesiredSize;
                 child.Arrange(new Rect(arrangedSize.X, 0, childSize.X, Max(childSize.Y, arrangedSize.Y)));

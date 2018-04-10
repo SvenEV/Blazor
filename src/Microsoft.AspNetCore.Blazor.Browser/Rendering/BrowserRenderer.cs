@@ -58,7 +58,7 @@ namespace Microsoft.AspNetCore.Blazor.Browser.Rendering
         public void AddComponent(Type componentType, string domElementSelector)
         {
             var component = InstantiateComponent(componentType);
-            var componentId = AssignComponentId(component, parentComponentId: -1);
+            var componentId = AssignComponentId(component);
             RegisteredFunction.InvokeUnmarshalled<int, string, int, object>(
                 "attachComponentToElement",
                 _browserRendererId,

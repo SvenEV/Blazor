@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.Blazor.RenderTree
             var editsBuffer = batchBuilder.EditsBuffer;
             var editsBufferStartLength = editsBuffer.Count;
 
-            var diffContext = new DiffContext(renderer, batchBuilder, oldTree.Array, newTree.Array, componentId);
+            var diffContext = new DiffContext(renderer, batchBuilder, oldTree.Array, newTree.Array);
             AppendDiffEntriesForRange(ref diffContext, 0, oldTree.Count, 0, newTree.Count);
 
             var editsSegment = editsBuffer.ToSegment(editsBufferStartLength, editsBuffer.Count);
@@ -587,7 +587,7 @@ namespace Microsoft.AspNetCore.Blazor.RenderTree
                 throw new InvalidOperationException($"Child component already exists during {nameof(InitializeNewComponentFrame)}");
             }
 
-            diffContext.Renderer.InstantiateChildComponentOnFrame(ref frame, diffContext.ParentComponentId);
+            diffContext.Renderer.InstantiateChildComponentOnFrame(ref frame);
             var childComponentInstance = frame.Component;
 
             // Set initial parameters
@@ -635,15 +635,13 @@ namespace Microsoft.AspNetCore.Blazor.RenderTree
             public readonly ArrayBuilder<RenderTreeEdit> Edits;
             public readonly ArrayBuilder<RenderTreeFrame> ReferenceFrames;
             public readonly Dictionary<string, int> AttributeDiffSet;
-            public readonly int ParentComponentId;
             public int SiblingIndex;
 
             public DiffContext(
                 Renderer renderer,
                 RenderBatchBuilder batchBuilder,
                 RenderTreeFrame[] oldTree,
-                RenderTreeFrame[] newTree,
-                int parentComponentId)
+                RenderTreeFrame[] newTree)
             {
                 Renderer = renderer;
                 BatchBuilder = batchBuilder;
@@ -652,7 +650,6 @@ namespace Microsoft.AspNetCore.Blazor.RenderTree
                 Edits = batchBuilder.EditsBuffer;
                 ReferenceFrames = batchBuilder.ReferenceFramesBuffer;
                 AttributeDiffSet = batchBuilder.AttributeDiffSet;
-                ParentComponentId = parentComponentId;
                 SiblingIndex = 0;
             }
         }

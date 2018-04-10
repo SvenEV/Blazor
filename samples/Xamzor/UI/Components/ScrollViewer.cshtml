@@ -1,6 +1,7 @@
 ﻿@inherits UIElement
 
 <div class="ScrollViewer" style="@LayoutCss @StyleString">
+    <img id="@Id" onerror="xamzorInit(this);" src/>
     @ChildContent
 </div>
 
@@ -14,7 +15,7 @@
 
     protected override Point MeasureOverride(Point availableSize)
     {
-        var childSize = Children.FirstOrDefault()?
+        var childSize = this.Children().FirstOrDefault()?
             .Measure(availableSize - Padding.Size) ?? Point.Zero;
 
         return childSize + Padding.Size;
@@ -22,9 +23,9 @@
 
     protected override Point ArrangeOverride(Point finalSize)
     {
-        Children.FirstOrDefault()?.Arrange(new Rect(
-            Padding.TopLeft,
-            finalSize - Padding.Size));
+        this.Children().FirstOrDefault()?.Arrange(new Rect(
+        Padding.TopLeft,
+        finalSize - Padding.Size));
 
         return finalSize;
     }

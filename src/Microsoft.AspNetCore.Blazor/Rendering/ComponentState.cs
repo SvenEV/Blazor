@@ -16,15 +16,9 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
     internal class ComponentState
     {
         private readonly int _componentId; // TODO: Change the type to 'long' when the Mono runtime has more complete support for passing longs in .NET->JS calls
-        internal readonly IComponent _component;
+        private readonly IComponent _component;
         private readonly Renderer _renderer;
-
-        // Parent and child component IDs
-        private readonly List<int> _childComponentIds = new List<int>();
-        internal readonly int ParentComponentId;
-        internal event Action<IComponent> ChildrenChanged;
-        internal IReadOnlyList<int> ChildComponentIds => _childComponentIds;
-
+        
         private RenderTreeBuilder _renderTreeBuilderCurrent;
         private RenderTreeBuilder _renderTreeBuilderPrevious;
         private bool _componentWasDisposed;
@@ -35,12 +29,11 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
         /// <param name="renderer">The <see cref="Renderer"/> with which the new instance should be associated.</param>
         /// <param name="componentId">The externally visible identifier for the <see cref="IComponent"/>. The identifier must be unique in the context of the <see cref="Renderer"/>.</param>
         /// <param name="component">The <see cref="IComponent"/> whose state is being tracked.</param>
-        /// <param name="parentComponentId">The ID of the parent component or -1 if there is no parent component.</param>
-        public ComponentState(Renderer renderer, int componentId, IComponent component, int parentComponentId)
+        /// 
+        public ComponentState(Renderer renderer, int componentId, IComponent component)
         {
             _componentId = componentId;
             _component = component ?? throw new ArgumentNullException(nameof(component));
-            ParentComponentId = parentComponentId;
             _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
             _renderTreeBuilderCurrent = new RenderTreeBuilder(renderer);
             _renderTreeBuilderPrevious = new RenderTreeBuilder(renderer);
@@ -95,18 +88,6 @@ namespace Microsoft.AspNetCore.Blazor.Rendering
                     $"The component of type {_component.GetType().FullName} cannot receive " +
                     $"events because it does not implement {typeof(IHandleEvent).FullName}.");
             }
-        }
-
-        public void AddChildComponent(int componentId)
-        {
-            _childComponentIds.Add(componentId);
-            ChildrenChanged?.Invoke(_component);
-        }
-
-        public void RemoveChildComponent(int componentId)
-        {
-            if (_childComponentIds.Remove(componentId))
-                ChildrenChanged?.Invoke(_component);
         }
     }
 }

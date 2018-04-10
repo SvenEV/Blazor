@@ -3,6 +3,9 @@
 <img class="Image" style="@LayoutCss user-select: none; -ms-user-select: none;"
      src="@Source" draggable="@(IsDraggable ? "true" : "false")" />
 
+<img id="@Id" onerror="xamzorInit(this);" src/>
+
+
 @functions{
 
     public string Source { get; set; }

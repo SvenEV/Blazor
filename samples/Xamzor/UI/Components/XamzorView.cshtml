@@ -2,16 +2,23 @@
 @inherits UIElement
 
 <div class="XamzorView" id="@Id" style="position: absolute; width: 100%; height: 100%;">
+    <img id="@Id" onerror="xamzorInitRoot(this);" src/>
     @ChildContent
-    <button @onclick(Layout) style="position: absolute; left: 0px; top: 0px; opacity: 0.4;">Layout</button>
+    <button @onclick(Layout) style="position: absolute; left: 0px; top: 32px; opacity: 0.4;">Layout</button>
 </div>
 
 @functions{
 
-    public string Id { get; } = nameof(XamzorView) + "_" + Guid.NewGuid();
+    protected override void OnInit()
+    {
+        base.OnInit();
+        Hierarchy.WindowResized += Layout;
+    }
 
     public void Layout()
     {
+        Hierarchy.Dump();
+
         using (UILog.BeginScope("LAYOUT", "LAYOUT STARTING", writeBraces: true))
         {
             try

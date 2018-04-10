@@ -1,6 +1,8 @@
 ﻿@inherits UIElement
 
 <div class="Grid" style="@LayoutCss background-color: @Background;">
+    <img id="@Id" onerror="xamzorInit(this);" src/>
+
     @ChildContent
 </div>
 
@@ -56,7 +58,7 @@
         }
 
         // Next, measure children (provide them with sizes of covered fixed-size spans [+ remainingWidth if auto/star spans are covered])
-        foreach (UIElement child in Children)
+        foreach (UIElement child in this.Children())
         {
             var area = GetCoveredArea(child);
             var coveredCols = cols.Skip(area.X).Take(area.Width);
@@ -131,7 +133,7 @@
     {
         // Problem: Assumes that finalSize is the same as Measure()-input
 
-        foreach (UIElement child in Children)
+        foreach (UIElement child in this.Children())
         {
             var area = GetCoveredArea(child);
             var offsetX = _cols.Take(area.X).Sum(s => s.ComputedSize);

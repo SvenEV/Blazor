@@ -1,6 +1,7 @@
 ﻿@inherits UIElement
 
 <button class="XButton" style="@LayoutCss" onclick="@OnClicked">
+    <img id="@Id" onerror="xamzorInit(this);" src/>
     @ChildContent
 </button>
 
@@ -13,7 +14,7 @@
 
     protected override Point MeasureOverride(Point availableSize)
     {
-        var childSize = Children.FirstOrDefault()?
+        var childSize = this.Children().FirstOrDefault()?
             .Measure(availableSize - Padding.Size) ?? Point.Zero;
 
         return childSize + Padding.Size;
@@ -21,7 +22,7 @@
 
     protected override Point ArrangeOverride(Point finalSize)
     {
-        Children.FirstOrDefault()?.Arrange(new Rect(
+        this.Children().FirstOrDefault()?.Arrange(new Rect(
             Padding.TopLeft,
             finalSize - Padding.Size));
 

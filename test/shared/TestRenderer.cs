@@ -23,8 +23,8 @@ namespace Microsoft.AspNetCore.Blazor.Test.Helpers
         public List<CapturedBatch> Batches { get; }
             = new List<CapturedBatch>();
 
-        public int AssignComponentId(IComponent component)
-            => AssignComponentId(component, -1);
+        public new int AssignComponentId(IComponent component)
+            => base.AssignComponentId(component);
 
         public new void DispatchEvent(int componentId, int eventHandlerId, UIEventArgs args)
             => base.DispatchEvent(componentId, eventHandlerId, args);
