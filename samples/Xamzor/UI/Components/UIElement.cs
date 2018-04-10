@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Components;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Xamzor.UI.Components
 {
     public class UIElement : BlazorComponent
     {
-        public string LayoutCss => $"position: absolute; overflow: hidden; left: {Bounds.X}px; top: {Bounds.Y}px; width: {Bounds.Width}px; height: {Bounds.Height}px; ";
+        public string LayoutCss => 
+            $"position: absolute; overflow: hidden; " +
+            $"left: {Bounds.X}px; top: {Bounds.Y}px; width: {Bounds.Width}px; height: {Bounds.Height}px; " +
+            $"clip: rect({ClippedBounds.Y - Bounds.Y}px, {ClippedBounds.X - Bounds.X + ClippedBounds.Width}px, {ClippedBounds.Y - Bounds.Y + ClippedBounds.Height}px, {ClippedBounds.X - Bounds.X}px); ";
 
         public string Id { get; }
 
@@ -43,6 +44,8 @@ namespace Xamzor.UI.Components
         public Point DesiredSize { get; private set; } // includes margins, computed by Measure()
 
         public Rect Bounds { get; private set; } // size excludes margins, computed by Arrange()
+
+        public Rect ClippedBounds { get; private set; } // bounds clipped to the finalRect size
 
         // Temporary properties - we'll invent some form of "attached properties" in the future
         public int Row { get; set; } = 0;
@@ -99,6 +102,7 @@ namespace Xamzor.UI.Components
                 () => $"<<< {nameof(Bounds)} = {Bounds}"))
             {
                 Bounds = ArrangeCore(finalRect);
+                ClippedBounds = finalRect;
             }
             StateHasChanged();
             return Bounds;
