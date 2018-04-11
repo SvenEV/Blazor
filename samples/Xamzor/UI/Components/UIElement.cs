@@ -70,8 +70,8 @@ namespace Xamzor.UI.Components
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Measure': {availableSize}");
 
             using (UILog.BeginScope("LAYOUT",
-                $"{GetType().Name}.Measure({availableSize})...",
-                () => $"<<< {nameof(DesiredSize)} = {DesiredSize}"))
+                $"{GetType().Name}.Measure{availableSize}...",
+                () => $"<<< {GetType().Name}.{nameof(DesiredSize)} = {DesiredSize}"))
             {
                 DesiredSize = Point.Min(MeasureCore(availableSize), availableSize);
             }
@@ -98,8 +98,8 @@ namespace Xamzor.UI.Components
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Arrange': {finalRect}");
 
             using (UILog.BeginScope("LAYOUT",
-                $"{GetType().Name}.Arrange({finalRect})...",
-                () => $"<<< {nameof(Bounds)} = {Bounds}"))
+                $"{GetType().Name}.Arrange{finalRect}...",
+                () => $"<<< {GetType().Name}.{nameof(Bounds)} = {Bounds}"))
             {
                 Bounds = ArrangeCore(finalRect);
                 ClippedBounds = finalRect;

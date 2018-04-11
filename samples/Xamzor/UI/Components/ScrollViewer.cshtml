@@ -7,29 +7,36 @@
 
 @functions{
 
-    public Thickness Padding { get; set; } = Thickness.Zero;
-
     public ScrollMode HorizontalScrollMode { get; set; } = ScrollMode.Disabled;
 
     public ScrollMode VerticalScrollMode { get; set; } = ScrollMode.Auto;
 
     protected override Point MeasureOverride(Point availableSize)
     {
-        var childSize = this.Children().FirstOrDefault()?
-            .Measure(availableSize - Padding.Size) ?? Point.Zero;
+        // Space in each direction is unlimited if scrolling is allowed
+        var childAvailableSize = new Point(
+            (HorizontalScrollMode == ScrollMode.Disabled) ? availableSize.X : double.PositiveInfinity,
+            (VerticalScrollMode == ScrollMode.Disabled) ? availableSize.Y : double.PositiveInfinity);
 
-        return childSize + Padding.Size;
+        var childSize = this.Children().FirstOrDefault()?
+            .Measure(childAvailableSize) ?? Point.Zero;
+
+        return childSize;
     }
 
     protected override Point ArrangeOverride(Point finalSize)
     {
-        var arrangeSize = new Point(
-            (HorizontalScrollMode == ScrollMode.Disabled) ? finalSize.X : Math.Max(finalSize.X, DesiredSize.X),
-            (VerticalScrollMode == ScrollMode.Disabled) ? finalSize.Y : Math.Max(finalSize.Y, DesiredSize.Y));
+        if (this.Children().FirstOrDefault() is UIElement child)
+        {
+            // To prevent the child from applying clipping, we provide it the size it desires even
+            // if that exceeds the given finalSize. (With clipping, we wouldn't see any content when 
+            // scrolling beyond the initial scroll position.)
+            var arrangeSize = new Point(
+                (HorizontalScrollMode == ScrollMode.Disabled) ? finalSize.X : Math.Max(finalSize.X, child.DesiredSize.X),
+                (VerticalScrollMode == ScrollMode.Disabled) ? finalSize.Y : Math.Max(finalSize.Y, child.DesiredSize.Y));
 
-        this.Children().FirstOrDefault()?.Arrange(new Rect(
-            Padding.TopLeft,
-            arrangeSize - Padding.Size));
+            child.Arrange(new Rect(Point.Zero, arrangeSize));
+        }
 
         return finalSize;
     }
