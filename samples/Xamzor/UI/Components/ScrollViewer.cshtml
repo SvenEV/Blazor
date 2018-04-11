@@ -23,14 +23,18 @@
 
     protected override Point ArrangeOverride(Point finalSize)
     {
+        var arrangeSize = new Point(
+            (HorizontalScrollMode == ScrollMode.Disabled) ? finalSize.X : Math.Max(finalSize.X, DesiredSize.X),
+            (VerticalScrollMode == ScrollMode.Disabled) ? finalSize.Y : Math.Max(finalSize.Y, DesiredSize.Y));
+
         this.Children().FirstOrDefault()?.Arrange(new Rect(
-        Padding.TopLeft,
-        finalSize - Padding.Size));
+            Padding.TopLeft,
+            arrangeSize - Padding.Size));
 
         return finalSize;
     }
 
     private string StyleString =>
-    $"overflow-x: {(HorizontalScrollMode == ScrollMode.Disabled ? "hidden" : HorizontalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};" +
-    $"overflow-y: {(VerticalScrollMode == ScrollMode.Disabled ? "hidden" : VerticalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};";
+        $"overflow-x: {(HorizontalScrollMode == ScrollMode.Disabled ? "hidden" : HorizontalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};" +
+        $"overflow-y: {(VerticalScrollMode == ScrollMode.Disabled ? "hidden" : VerticalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};";
 }
