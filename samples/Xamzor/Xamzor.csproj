@@ -19,12 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.0-preview2-final" PrivateAssets="all" />
-    <!--<PackageReference Include="Microsoft.AspNetCore.Blazor.Browser" Version="0.2.0-preview1-10168" />-->
-    <!--<PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="0.2.0-preview1-10168" />-->
-    <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Blazor.Browser\Microsoft.AspNetCore.Blazor.Browser.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Browser" Version="0.3.0-preview1-10200" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="0.3.0-preview1-10200" />
   </ItemGroup>
-
-  <!-- Local alternative to <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" /> -->
-  <Import Project="..\..\src\Microsoft.AspNetCore.Blazor.Build\ReferenceFromSource.props" />
 
 </Project>

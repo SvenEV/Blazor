@@ -36,5 +36,14 @@ namespace Xamzor.UI
 
         public static bool EqualsApprox(double a, double b, double tolerance = .001) =>
             Math.Abs(a - b) <= tolerance;
+
+        public static Thickness T(double uniformSize) =>
+            new Thickness(uniformSize);
+
+        public static Thickness T(double horizontalSize, double verticalSize) =>
+            new Thickness(horizontalSize, verticalSize, horizontalSize, verticalSize);
+
+        public static Thickness T(double left, double top, double right, double bottom) =>
+            new Thickness(left, top, right, bottom);
     }
 }
