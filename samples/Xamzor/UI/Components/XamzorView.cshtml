@@ -3,7 +3,6 @@
 
 <div xamzorid="@Id" id="@Id" class="XamzorView" style="position: absolute; width: 100%; height: 100%;">
     @ChildContent
-    <button onclick="@(e => Layout())" style="position: absolute; left: 0px; top: 32px; opacity: 0.4;">Layout</button>
     <button onclick="@(e => View.VisualTree.Dump())" style="position: absolute; left: 0px; top: 64px; opacity: 0.4;">Hierarchy</button>
 </div>
 
@@ -15,9 +14,7 @@
     {
         base.OnInit();
         Application.RegisterView(this);
-        Application.WindowResized += InvalidateMeasure;
         Owner?.OnXamzorViewInitialized(this);
-        LayoutManager.Instance.ExecuteInitialLayoutPass(this);
     }
 
     public override void Dispose()
@@ -25,51 +22,7 @@
         base.Dispose();
         Application.UnregisterView(Id);
     }
-
-    public void MeasureRoot()
-    {
-        try
-        {
-            var sizeString = RegisteredFunction.Invoke<string>("getSize", Id);
-            var sizeParts = sizeString.Split(',');
-            Width = double.Parse(sizeParts[0]);
-            Height = double.Parse(sizeParts[1]);
-            Measure(new Point(Width, Height));
-        }
-        catch (JavaScriptException)
-        {
-            return; // Not yet rendered
-        }
-    }
-
-    public void Layout() => LayoutManager.Instance.RunQueuedLayoutPass();
-
-    public void ArrangeRoot()
-    {
-        Arrange(new Rect(Point.Zero, DesiredSize));
-    }
-
-    //public void Layout()
-    //{
-    //    using (UILog.BeginScope("LAYOUT", "LAYOUT STARTING", writeBraces: true))
-    //    {
-    //        try
-    //        {
-    //            var sizeString = RegisteredFunction.Invoke<string>("getSize", Id);
-    //            var sizeParts = sizeString.Split(',');
-    //            Width = double.Parse(sizeParts[0]);
-    //            Height = double.Parse(sizeParts[1]);
-    //        }
-    //        catch (JavaScriptException)
-    //        {
-    //            return; // Not yet rendered
-    //        }
-
-    //        Measure(new Point(Width, Height));
-    //        Arrange(new Rect(0, 0, Width, Height));
-    //    }
-    //}
-
+    
     public interface IXamzorViewOwner
     {
         void OnXamzorViewInitialized(XamzorView view);

@@ -24,34 +24,6 @@
 
     public string Text { get; set; }
 
-    protected override UIElementConfiguration OnConfiguring(UIElementConfiguration config) => base.OnConfiguring(config)
-        .AffectsMeasure(nameof(FontFamily))
-        .AffectsMeasure(nameof(FontSize))
-        .AffectsMeasure(nameof(FontWeight))
-        .AffectsMeasure(nameof(FontStyle))
-        .AffectsMeasure(nameof(TextWrapping))
-        .AffectsMeasure(nameof(TextTrimming))
-        .AffectsMeasure(nameof(Text));
-
-    protected override Point MeasureOverride(Point availableSize)
-    {
-        if (Text == null)
-            return Point.Zero;
-
-        var sizeString = RegisteredFunction.Invoke<string>("measureHtml",
-            $"<div style=\"{StyleString} max-width: {availableSize.X}px; max-height: {availableSize.Y}px;\">{Text}</div>");
-
-        var sizeParts = sizeString.Split(',');
-
-        var size = Point.Min(availableSize, new Point(
-            double.Parse(sizeParts[0]),
-            double.Parse(sizeParts[1])));
-
-        UILog.Write("TEXT", $"Measured a size of {size} for text '{Text}'");
-
-        return size;
-    }
-
     private string StyleString =>
         $"font-family: {FontFamily}; font-size: {FontSize}px; color: {Foreground};" +
         $"font-weight: {(int)FontWeight};" +
