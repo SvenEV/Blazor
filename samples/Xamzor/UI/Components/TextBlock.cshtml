@@ -2,8 +2,7 @@
 
 @inherits UIElement
 
-<div class="TextBlock" style="@LayoutCss @StyleString">@Text</div>
-<img id="@Id" onerror="xamzorInit(this);" src/>
+<div xamzorid="@Id" class="TextBlock" style="@LayoutCss @StyleString">@Text</div>
 
 @functions{
 
@@ -24,6 +23,15 @@
     public bool IsTextSelectionEnabled { get; set; } = false;
 
     public string Text { get; set; }
+
+    protected override UIElementConfiguration OnConfiguring(UIElementConfiguration config) => base.OnConfiguring(config)
+        .AffectsMeasure(nameof(FontFamily))
+        .AffectsMeasure(nameof(FontSize))
+        .AffectsMeasure(nameof(FontWeight))
+        .AffectsMeasure(nameof(FontStyle))
+        .AffectsMeasure(nameof(TextWrapping))
+        .AffectsMeasure(nameof(TextTrimming))
+        .AffectsMeasure(nameof(Text));
 
     protected override Point MeasureOverride(Point availableSize)
     {

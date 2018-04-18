@@ -1,7 +1,6 @@
 ﻿@inherits UIElement
 
-<div class="StackPanel" style="@LayoutCss background-color: @Background;">
-    <img id="@Id" onerror="xamzorInit(this);" src/>
+<div xamzorid="@Id" class="StackPanel" style="@LayoutCss background-color: @Background;">
     @ChildContent
 </div>
 
@@ -12,6 +11,10 @@
     public string Background { get; set; } = "transparent";
 
     public double Spacing { get; set; } = 0;
+
+    protected override UIElementConfiguration OnConfiguring(UIElementConfiguration config) => base.OnConfiguring(config)
+        .AffectsMeasure(nameof(Orientation))
+        .AffectsMeasure(nameof(Spacing));
 
     protected override Point MeasureOverride(Point availableSize)
     {

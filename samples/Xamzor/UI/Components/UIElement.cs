@@ -1,17 +1,34 @@
 ﻿using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Components;
 using System;
+using System.Collections.Generic;
 
 namespace Xamzor.UI.Components
 {
-    public class UIElement : BlazorComponent
+    public class UIElement : BlazorComponent, IDisposable
     {
-        public string LayoutCss => 
+        private readonly UIElementConfiguration _config;
+        private ApplicationView _view;
+        private int? _measureHash;
+        private int? _arrangeHash;
+
+        public bool IsMeasureValid { get; private set; } = false;
+        public bool IsArrangeValid { get; private set; } = false;
+        public  Point? PreviousMeasureInput { get; private set; }
+        public  Rect? PreviousArrangeInput { get; private set; }
+
+        public string LayoutCss =>
             $"position: absolute; overflow: hidden; " +
             $"left: {Bounds.X}px; top: {Bounds.Y}px; width: {Bounds.Width}px; height: {Bounds.Height}px; " +
             $"clip: rect({ClippedBounds.Y - Bounds.Y}px, {ClippedBounds.X - Bounds.X + ClippedBounds.Width}px, {ClippedBounds.Y - Bounds.Y + ClippedBounds.Height}px, {ClippedBounds.X - Bounds.X}px); ";
 
         public string Id { get; }
+
+        public ApplicationView View
+        {
+            get => _view ?? throw new InvalidOperationException($"Not attached to a view ({this})");
+            private set => _view = value;
+        }
 
         public RenderFragment ChildContent { get; set; }
 
@@ -36,7 +53,7 @@ namespace Xamzor.UI.Components
         public Thickness Margin { get; set; } = Thickness.Zero;
 
         public string Tag { get; set; }
-        
+
         public Alignment HorizontalAlignment { get; set; } = Alignment.Stretch;
 
         public Alignment VerticalAlignment { get; set; } = Alignment.Stretch;
@@ -56,12 +73,90 @@ namespace Xamzor.UI.Components
         public UIElement()
         {
             Id = GetType().Name + "_" + Guid.NewGuid().ToString();
+            _config = new UIElementConfiguration();
+            OnConfiguring(_config);
         }
+
+        protected virtual UIElementConfiguration OnConfiguring(UIElementConfiguration config) => config
+            .AffectsMeasure(nameof(ChildContent))
+            .AffectsMeasure(nameof(Margin))
+            .AffectsMeasure(nameof(Column))
+            .AffectsMeasure(nameof(Row))
+            .AffectsMeasure(nameof(Width))
+            .AffectsMeasure(nameof(Height))
+            .AffectsMeasure(nameof(MinWidth))
+            .AffectsMeasure(nameof(MinHeight))
+            .AffectsMeasure(nameof(MaxWidth))
+            .AffectsMeasure(nameof(MaxHeight))
+            .AffectsMeasure(nameof(HorizontalAlignment))
+            .AffectsMeasure(nameof(VerticalAlignment));
 
         protected override void OnInit()
         {
-            Hierarchy.RegisterElement(this);
+            if (!(this is XamzorView))
+                Application.RegisterElement(this);
+
             UILog.Write("INIT", GetType().Name + " " + Tag + " initialized");
+        }
+
+        public void AttachToView(ApplicationView view) => View = view;
+
+        public void DetachFromView() => View = View;
+
+        public override void SetParameters(ParameterCollection parameters)
+        {
+            base.SetParameters(parameters);
+
+            var newMeasureHash = 832753926;
+            var newArrangeHash = 832753926;
+
+            foreach (var p in parameters)
+            {
+                var affectsMeasure = _config.PropertiesAffectingMeasure.Contains(p.Name);
+                var affectsArrange = _config.PropertiesAffectingArrange.Contains(p.Name);
+
+                if (affectsMeasure)
+                    newMeasureHash = newMeasureHash * -1521134295 + (p.Value?.GetHashCode() ?? 0);
+
+                if (affectsArrange)
+                    newArrangeHash = newArrangeHash * -1521134295 + (p.Value?.GetHashCode() ?? 0);
+            }
+
+            if (newMeasureHash != _measureHash)
+            {
+                IsMeasureValid = false;
+                IsArrangeValid = false;
+                LayoutManager.Instance.InvalidateMeasure(this);
+            }
+            else if (newArrangeHash != _arrangeHash)
+            {
+                IsArrangeValid = false;
+                LayoutManager.Instance.InvalidateArrange(this);
+            }
+
+            _measureHash = newMeasureHash;
+            _arrangeHash = newArrangeHash;
+
+            InvalidateMeasure();
+        }
+        
+        public void InvalidateMeasure()
+        {
+            if (IsMeasureValid)
+            {
+                IsMeasureValid = false;
+                IsArrangeValid = false;
+                LayoutManager.Instance.InvalidateMeasure(this);
+            }
+        }
+
+        public void InvalidateArrange()
+        {
+            if (IsArrangeValid)
+            {
+                IsArrangeValid = false;
+                LayoutManager.Instance.InvalidateArrange(this);
+            }
         }
 
         public Point Measure(Point availableSize)
@@ -69,11 +164,20 @@ namespace Xamzor.UI.Components
             if (IsInvalidInput(availableSize))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Measure': {availableSize}");
 
+            // If possible, use cached desired size
+            if (IsMeasureValid && PreviousMeasureInput == availableSize)
+            {
+                UILog.Write("DEBUG", $"Using cached DesiredSize of '{this}'");
+                return DesiredSize;
+            }
+
             using (UILog.BeginScope("LAYOUT",
                 $"{GetType().Name}.Measure{availableSize}...",
                 () => $"<<< {GetType().Name}.{nameof(DesiredSize)} = {DesiredSize}"))
             {
                 DesiredSize = Point.Min(MeasureCore(availableSize), availableSize);
+                PreviousMeasureInput = availableSize;
+                IsMeasureValid = true;
             }
 
             if (IsInvalidOutput(DesiredSize))
@@ -81,8 +185,9 @@ namespace Xamzor.UI.Components
 
             return DesiredSize;
 
-            // Available size must not be NaN (but can be infinity)
+            // Available size must not be NaN or negative (but can be infinity)
             bool IsInvalidInput(Point size) =>
+                size.X < 0 || size.Y < 0 ||
                 double.IsNaN(size.X) || double.IsNaN(size.Y);
 
             // Desired size must be >=0 (not NaN and not infinity)
@@ -97,13 +202,26 @@ namespace Xamzor.UI.Components
             if (IsInvalidInput(finalRect))
                 throw new LayoutException($"Invalid input for '{GetType().Name}.Arrange': {finalRect}");
 
+            if (!IsMeasureValid)
+                Measure(PreviousMeasureInput ?? finalRect.Size);
+
+            // If possible, use cached rect
+            if (IsArrangeValid && PreviousArrangeInput == finalRect)
+            {
+                UILog.Write("DEBUG", $"Using cached Bounds of '{this}'");
+                return Bounds;
+            }
+
             using (UILog.BeginScope("LAYOUT",
                 $"{GetType().Name}.Arrange{finalRect}...",
                 () => $"<<< {GetType().Name}.{nameof(Bounds)} = {Bounds}"))
             {
                 Bounds = ArrangeCore(finalRect);
                 ClippedBounds = finalRect;
+                PreviousArrangeInput = finalRect;
+                IsArrangeValid = true;
             }
+
             StateHasChanged();
             return Bounds;
 
@@ -217,17 +335,37 @@ namespace Xamzor.UI.Components
             return finalSize;
         }
 
-        protected void RecalculateLayout()
-        {
-            // Temporary solution to force a full recalculation of the XamzorView layout
-            var current = this;
-            while (current.Parent() != null)
-                current = current.Parent();
-
-            if (current is XamzorView root)
-                root.Layout();
-        }
-
         public override string ToString() => GetType().Name + " " + Tag;
+
+        public virtual void Dispose()
+        {
+            UILog.Write("DISPOSE", "Disposed " + this);
+
+            if (!(this is XamzorView))
+                Application.UnregisterElement(this);
+        }
+    }
+}
+
+public class UIElementConfiguration
+{
+    private readonly HashSet<string> _propertiesAffectingMeasure = new HashSet<string>();
+    private readonly HashSet<string> _propertiesAffectingArrange = new HashSet<string>();
+
+    // TODO: need some kind of IReadOnlyCollection with Contains(...) here
+    public HashSet<string> PropertiesAffectingMeasure => _propertiesAffectingMeasure;
+
+    public HashSet<string> PropertiesAffectingArrange => _propertiesAffectingArrange;
+
+    public UIElementConfiguration AffectsMeasure(string propertyName)
+    {
+        _propertiesAffectingMeasure.Add(propertyName);
+        return this;
+    }
+
+    public UIElementConfiguration AffectsArrange(string propertyName)
+    {
+        _propertiesAffectingArrange.Add(propertyName);
+        return this;
     }
 }

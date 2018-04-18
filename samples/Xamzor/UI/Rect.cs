@@ -22,7 +22,15 @@
         public Rect(Point topLeft, Point size) : this(topLeft.X, topLeft.Y, size.X, size.Y)
         {
         }
-        
+
         public override string ToString() => $"({X}, {Y}, {Width}, {Height})";
+
+        public override bool Equals(object obj) => base.Equals(obj);
+
+        public override int GetHashCode() => base.GetHashCode();
+
+        public static bool operator ==(Rect a, Rect b) => a.Equals(b);
+
+        public static bool operator !=(Rect a, Rect b) => !a.Equals(b);
     }
 }

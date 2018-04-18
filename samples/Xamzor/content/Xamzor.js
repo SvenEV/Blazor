@@ -7,7 +7,7 @@
 Blazor.registerFunction('measureHtml', (data) => {
     var container = document.getElementById('xamzorMeasureContainer');
 
-    if (container == null) {
+    if (container === null) {
         container = document.createElement('div');
         container.style = 'display: inline-block; visibility: hidden;';
         container.id = 'xamzorMeasureContainer';
@@ -61,26 +61,41 @@ Blazor.registerFunction('measureImage', (source) => {
     }
 });
 
-function xamzorInitRoot(self) {
-    xamzorInit(self);
-    window.addEventListener('resize', function () {
-        xamzorInvokeCSharpMethod('Xamzor.UI', 'Hierarchy', 'NotifyWindowResized');
-    })
-}
+Blazor.registerFunction('onViewRegistered', viewId => {
+    var observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
 
-// Dispatches an event to notify parent component of a new child component
-function xamzorInit(self) {
-    self.parentNode.addEventListener('xamzorInitialized', e => {
-        if (e.target.id == self.id)
-            return true; // ignore own event
-
-        xamzorInvokeCSharpMethod('Xamzor.UI', 'Hierarchy', 'AddRelation', [self.id, e.target.id]);
-        e.stopPropagation();
+            // find closest ancestor that is a Xamzor component
+            var parent = mutation.target;
+            while (parent && !(parent instanceof Element && parent.hasAttribute('xamzorid')))
+                parent = parent.parentElement;
+            
+            mutation.addedNodes.forEach(child => {
+                // Register component
+                if (parent && child instanceof Element && child.hasAttribute('xamzorid')) {
+                    xamzorInvokeCSharpMethod(
+                        'Xamzor.UI', 'Application', 'JSRegisterElement',
+                        [viewId, parent.getAttribute('xamzorid'), child.getAttribute('xamzorid')]);
+                }
+            });
+        });
     });
 
-    var event = new Event('xamzorInitialized', { bubbles: true });
-    self.dispatchEvent(event);
-}
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    window.Xamzor.ViewObservers[viewId] = observer;
+});
+
+Blazor.registerFunction('onViewUnregistered', viewId => {
+    var observer = window.Xamzor.ViewObservers[viewId];
+    if (observer) {
+        observer.disconnect();
+        delete window.Xamzor.ViewObservers[viewId];
+    }
+})
 
 function xamzorInvokeCSharpMethod(namespace, typeName, methodName, args) {
     const assemblyName = 'Xamzor';
@@ -90,3 +105,10 @@ function xamzorInvokeCSharpMethod(namespace, typeName, methodName, args) {
         args.forEach(arg => csArgs.push(Blazor.platform.toDotNetString(arg)));
     let resultAsDotNetString = Blazor.platform.callMethod(method, null, csArgs);
 }
+
+window.Xamzor = {
+    ViewObservers: {}
+};
+
+window.addEventListener('resize', () =>
+    xamzorInvokeCSharpMethod('Xamzor.UI', 'Application', 'JSNotifyWindowResized'));

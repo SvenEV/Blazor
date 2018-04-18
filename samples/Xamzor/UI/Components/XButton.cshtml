@@ -1,7 +1,6 @@
 ﻿@inherits UIElement
 
-<button class="XButton" style="@LayoutCss" onclick="@OnClicked">
-    <img id="@Id" onerror="xamzorInit(this);" src/>
+<button xamzorid="@Id" class="XButton" style="@LayoutCss" onclick="@OnClicked">
     @ChildContent
 </button>
 
@@ -11,6 +10,9 @@
 
     // This is a property because adding handlers to events via tag helpers doesn't seem to be supported yet
     public EventHandler<UIMouseEventArgs> Clicked { get; set; }
+
+    protected override UIElementConfiguration OnConfiguring(UIElementConfiguration config) => base.OnConfiguring(config)
+        .AffectsMeasure(nameof(Padding));
 
     protected override Point MeasureOverride(Point availableSize)
     {

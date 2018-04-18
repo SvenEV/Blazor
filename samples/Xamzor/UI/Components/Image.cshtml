@@ -1,10 +1,7 @@
 ﻿@inherits UIElement
 
-<img class="Image" style="@LayoutCss user-select: none; -ms-user-select: none;"
+<img xamzorid="@Id" class="Image" style="@LayoutCss user-select: none; -ms-user-select: none;"
      src="@Source" draggable="@(IsDraggable ? "true" : "false")" />
-
-<img id="@Id" onerror="xamzorInit(this);" src/>
-
 
 @functions{
 
@@ -18,13 +15,18 @@
 
     private Point _imageSize;
 
+    protected override UIElementConfiguration OnConfiguring(UIElementConfiguration config) => base.OnConfiguring(config)
+        .AffectsMeasure(nameof(Source))
+        .AffectsMeasure(nameof(Stretch))
+        .AffectsMeasure(nameof(StretchDirection));
+
     protected override async Task OnParametersSetAsync()
     {
         if (_imageSize != Point.Zero || string.IsNullOrWhiteSpace(Source))
             return;
 
         _imageSize = await ImageMeasureInterop.MeasureImageAsync(Source);
-        // TODO: recalculate layout efficiently
+        InvalidateMeasure();
     }
 
     protected override Point MeasureOverride(Point availableSize) =>

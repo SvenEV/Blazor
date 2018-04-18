@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Xamzor.UI
@@ -7,12 +8,13 @@ namespace Xamzor.UI
     public static class UILog
     {
         private static readonly ThreadLocal<int> _depth = new ThreadLocal<int>();
+        private static readonly Stopwatch _stopwatch = Stopwatch.StartNew();
 
         public static bool IsEnabled { get; set; } = true;
 
         public static HashSet<string> ExcludedCategories { get; set; } = new HashSet<string>
         {
-            "INIT", "LAYOUT", "TEXT", "IMAGE"
+            "INIT", "TEXT", "IMAGE", "HIERARCHY", "LAYOUT"
         };
 
         public static IDisposable BeginScope(string category, string enterText, Func<string> exitText = null, bool writeBraces = false)
@@ -20,11 +22,15 @@ namespace Xamzor.UI
             if (!IsEnabled)
                 return new LogScope(null);
 
+            var startTime = _stopwatch.Elapsed;
+
             var scope = new LogScope(() =>
             {
+                var elapsed = _stopwatch.Elapsed - startTime;
+
                 _depth.Value--;
                 if (exitText != null || writeBraces)
-                    Write(category, (writeBraces ? "} " : "") + (exitText?.Invoke() ?? ""));
+                    Write(category, (writeBraces ? "} " : "") + (exitText?.Invoke() ?? "") + " (" + (int)elapsed.TotalMilliseconds + " ms)");
             });
 
             if (enterText != null)

@@ -1,8 +1,6 @@
 ﻿@inherits UIElement
 
-<div class="Grid" style="@LayoutCss background-color: @Background;">
-    <img id="@Id" onerror="xamzorInit(this);" src/>
-
+<div xamzorid="@Id" class="Grid" style="@LayoutCss background-color: @Background;">
     @ChildContent
 </div>
 
@@ -17,6 +15,11 @@
 
     private GridSpan[] _rows;
     private GridSpan[] _cols;
+
+    protected override UIElementConfiguration OnConfiguring(UIElementConfiguration config) => base.OnConfiguring(config)
+        .AffectsMeasure(nameof(RowDefinitions))
+        .AffectsMeasure(nameof(ColumnDefinitions));
+
 
     protected override Point MeasureOverride(Point availableSize)
     {
