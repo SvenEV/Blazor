@@ -42,6 +42,8 @@ namespace Xamzor.UI.Components
 
         public Thickness Margin { get; set; } = Thickness.Zero;
 
+        public Thickness Padding { get; set; } = Thickness.Zero;
+
         public string Tag { get; set; }
 
         public Alignment HorizontalAlignment { get; set; } = Alignment.Stretch;
@@ -113,12 +115,7 @@ namespace Xamzor.UI.Components
         protected virtual void ComputeOwnLayoutCss(StringBuilder sb)
         {
             sb.Append("display: grid; overflow: hidden; ");
-
-            // If children have HorizontalAlignment = Stretch but their size is smaller than
-            // the available space (due to Width or MaxWidth), this centers them (like in XAML).
-            // Without this, browsers align such children left. Same for vertical alignment.
-            sb.Append($"justify-items: center; align-items: center;");
-
+            
             if (!double.IsNaN(Width))
                 sb.Append($"width: {Width}px; ");
 
@@ -138,22 +135,45 @@ namespace Xamzor.UI.Components
                 sb.Append($"max-height: {MaxHeight}px; ");
 
             sb.Append($"margin: {ThicknessToCss(Margin)}; ");
-            sb.Append($"justify-self: {AlignmentToCss(HorizontalAlignment)}; ");
-            sb.Append($"align-self: {AlignmentToCss(VerticalAlignment)}; ");
+            sb.Append($"padding: {ThicknessToCss(Padding)}; ");
+
+            // If the element cannot effectively stretch due to size constraints (Width/MaxWidth),
+            // CSS will align it at 'start' instead. To get the typical XAML behavior ('center'),
+            // we explicitly set the CSS alignment to 'center' instead of 'stretch' in such cases.
+            var canStretchH =
+                HorizontalAlignment == Alignment.Stretch &&
+                double.IsNaN(Width) && MaxWidth == double.PositiveInfinity;
+
+            var canStretchV =
+                VerticalAlignment == Alignment.Stretch &&
+                double.IsNaN(Height) && MaxHeight == double.PositiveInfinity;
+
+            // TODO: Remaining problem:
+            //       If only MaxWidth is set (but no Width) and HorizontalAlignment == Stretch,
+            //       the MaxWidth is not exhausted. Instead the element will size to content.
+
+            // Here's an attempt at a workaround, but it breaks if MaxWidth exceed available width
+            if (!canStretchH && MaxWidth != double.PositiveInfinity)
+                sb.Append($"width: {MaxWidth}px; ");
+            if (!canStretchV && MaxHeight != double.PositiveInfinity)
+                sb.Append($"height: {MaxHeight}px; ");
+
+            sb.Append($"justify-self: {AlignmentToCss(HorizontalAlignment, canStretchH)}; ");
+            sb.Append($"align-self: {AlignmentToCss(VerticalAlignment, canStretchV)}; ");
         }
 
         protected virtual void ComputeChildLayoutCss(StringBuilder sb, UIElement child)
         {
         }
 
-        protected string AlignmentToCss(Alignment alignment)
+        protected string AlignmentToCss(Alignment alignment, bool allowStretch)
         {
             switch (alignment)
             {
                 case Alignment.Start: return "start";
                 case Alignment.End: return "end";
                 case Alignment.Center: return "center";
-                case Alignment.Stretch: return "auto";
+                case Alignment.Stretch: return allowStretch ? "stretch" : "center";
                 default: throw new NotImplementedException();
             }
         }

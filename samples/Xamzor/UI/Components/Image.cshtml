@@ -1,7 +1,10 @@
 ﻿@inherits UIElement
 
-<img xamzorid="@Id" class="Image" style="@LayoutCss user-select: none; -ms-user-select: none;"
-     src="@Source" draggable="@(IsDraggable ? "true" : "false")" />
+<div class="Image" style="display: grid;">
+    <img xamzorid="@Id" style="user-select: none; -ms-user-select: none; @LayoutCss"
+         src="@Source" draggable="@(IsDraggable ? "true" : "false")"
+         onerror="this.style.display='none'"/>
+</div>
 
 @functions{
 
@@ -12,4 +15,5 @@
     public ImageStretch Stretch { get; set; } = ImageStretch.Uniform;
 
     public StretchDirection StretchDirection { get; set; } = StretchDirection.Both;
+
 }
