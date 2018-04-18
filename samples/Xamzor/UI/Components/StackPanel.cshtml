@@ -11,4 +11,13 @@
     public string Background { get; set; } = "transparent";
 
     public double Spacing { get; set; } = 0;
+
+    protected override void ComputeOwnLayoutCss(System.Text.StringBuilder sb)
+    {
+        base.ComputeOwnLayoutCss(sb);
+        sb.Append($"grid-auto-flow: {(Orientation == Orientation.Horizontal ? "column" : "row")}; ");
+
+        if (Spacing != 0)
+            sb.Append($"grid-gap: {Spacing}px; ");
+    }
 }
