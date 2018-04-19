@@ -1,10 +1,6 @@
 ﻿@inherits UIElement
 
-<div class="Image" style="display: grid;">
-    <img xamzorid="@Id" style="user-select: none; -ms-user-select: none; @LayoutCss"
-         src="@Source" draggable="@(IsDraggable ? "true" : "false")"
-         onerror="this.style.display='none'"/>
-</div>
+<img class="Image" style="@LayoutCss" src="@Source" onerror="this.style.display = 'none'" />
 
 @functions{
 
@@ -16,4 +12,44 @@
 
     public StretchDirection StretchDirection { get; set; } = StretchDirection.Both;
 
+    protected override void ComputeOwnLayoutCss(System.Text.StringBuilder sb)
+    {
+        base.ComputeOwnLayoutCss(sb);
+
+        switch (Stretch)
+        {
+            case ImageStretch.Fill:
+                sb.Append($"justify-self: stretch; ");
+                sb.Append($"align-self: stretch; ");
+                break;
+
+            case ImageStretch.Uniform:
+                sb.Append($"justify-self: stretch; ");
+                sb.Append($"align-self: stretch; ");
+                sb.Append($"object-fit: contain; ");
+                break;
+
+            case ImageStretch.UniformToFill:
+                sb.Append($"justify-self: stretch; ");
+                sb.Append($"align-self: stretch; ");
+                sb.Append($"object-fit: cover; ");
+                break;
+
+            case ImageStretch.None:
+                sb.Append($"object-fit: none; ");
+                break;
+        }
+
+        sb.Append($"object-position: {AlignmentToPosition(HorizontalAlignment)} {AlignmentToPosition(VerticalAlignment)}");
+
+        string AlignmentToPosition(Alignment a) =>
+            a == Alignment.Start ? "0%" :
+            a == Alignment.End ? "100%" :
+            a == Alignment.Center ? "50%" :
+            a == Alignment.Stretch ? "50%" :
+            throw new NotImplementedException();
+    }
+
+    // TODO: 'Stretch' behavior does not match XAML 100%. If image fits into space, centering (50%) is correct.
+    // If image exceeds available space, XAML aligns at start instead of center.
 }
