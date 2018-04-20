@@ -1,6 +1,8 @@
 ﻿@inherits UIElement
 
-<img class="Image" style="@LayoutCss" src="@Source" onerror="this.style.display = 'none'" />
+<div style="@LayoutCss">
+    <img class="Image" style="@InnerCss" src="@Source" onerror="this.style.display = 'none'" />
+</div>
 
 @functions{
 
@@ -16,39 +18,80 @@
     {
         base.ComputeOwnLayoutCss(sb);
 
-        switch (Stretch)
-        {
-            case ImageStretch.Fill:
-                sb.Append($"justify-self: stretch; ");
-                sb.Append($"align-self: stretch; ");
-                break;
-
-            case ImageStretch.Uniform:
-                sb.Append($"justify-self: stretch; ");
-                sb.Append($"align-self: stretch; ");
-                sb.Append($"object-fit: contain; ");
-                break;
-
-            case ImageStretch.UniformToFill:
-                sb.Append($"justify-self: stretch; ");
-                sb.Append($"align-self: stretch; ");
-                sb.Append($"object-fit: cover; ");
-                break;
-
-            case ImageStretch.None:
-                sb.Append($"object-fit: none; ");
-                break;
-        }
-
-        sb.Append($"object-position: {AlignmentToPosition(HorizontalAlignment)} {AlignmentToPosition(VerticalAlignment)}");
-
-        string AlignmentToPosition(Alignment a) =>
-            a == Alignment.Start ? "0%" :
-            a == Alignment.End ? "100%" :
-            a == Alignment.Center ? "50%" :
-            a == Alignment.Stretch ? "50%" :
+        var size =
+            Stretch == ImageStretch.Fill ? "100% 100%" :
+            Stretch == ImageStretch.Uniform ? "contain" :
+            Stretch == ImageStretch.UniformToFill ? "cover" :
+            Stretch == ImageStretch.None ? "none" :
             throw new NotImplementedException();
+
+        sb.Append($"justify-self: stretch; align-self: stretch; ");
+        sb.Append("width: initial; height: initial; ");
+        sb.Append("min-width: initial; min-height: initial; ");
+        sb.Append("max-width: initial; max-height: initial; ");
+        sb.Append($"background-image: url({Source}); ");
+        sb.Append($"background-size: {size}; ");
+        sb.Append($"background-position: {AlignmentToPosition(HorizontalAlignment)} {AlignmentToPosition(VerticalAlignment)}; ");
+        sb.Append("background-repeat: no-repeat; ");
     }
+
+    private string InnerCss
+    {
+        get
+        {
+            var sb = new System.Text.StringBuilder("justify-self: stretch; align-self: stretch; ");
+            sb.Append("min-width: 0; min-height: 0; ");
+
+            if (!double.IsNaN(Width))
+                sb.Append($"width: {Width}px; ");
+
+            if (!double.IsNaN(Height))
+                sb.Append($"height: {Height}px; ");
+
+            if (MinWidth > 0)
+                sb.Append($"min-width: {MinWidth}px; ");
+
+            if (MinHeight > 0)
+                sb.Append($"min-height: {MinHeight}px; ");
+
+            if (MaxWidth != double.PositiveInfinity)
+                sb.Append($"max-width: {MaxWidth}px; ");
+
+            if (MaxHeight != double.PositiveInfinity)
+                sb.Append($"max-height: {MaxHeight}px; ");
+
+            switch (Stretch)
+            {
+                case ImageStretch.Fill:
+                    break;
+
+                case ImageStretch.Uniform:
+                    sb.Append($"object-fit: contain; ");
+                    break;
+
+                case ImageStretch.UniformToFill:
+                    sb.Append($"object-fit: cover; ");
+                    break;
+
+                case ImageStretch.None:
+                    sb.Append($"object-fit: none; ");
+                    break;
+            }
+
+            sb.Append($"object-position: {AlignmentToPosition(HorizontalAlignment)} {AlignmentToPosition(VerticalAlignment)}; ");
+
+
+            sb.Append($"opacity: 0; ");
+            return sb.ToString();
+        }
+    }
+
+    private static string AlignmentToPosition(Alignment a) =>
+        a == Alignment.Start ? "0%" :
+        a == Alignment.End ? "100%" :
+        a == Alignment.Center ? "50%" :
+        a == Alignment.Stretch ? "50%" :
+        throw new NotImplementedException();
 
     // TODO: 'Stretch' behavior does not match XAML 100%. If image fits into space, centering (50%) is correct.
     // If image exceeds available space, XAML aligns at start instead of center.

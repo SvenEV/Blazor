@@ -1,74 +1,84 @@
 ﻿@page "/imagetests"
 
 <XamzorView>
+    <StackPanel>
 
-    <Grid RowDefinitions=@Rows("Auto", "50", "50", "50", "50")
-          ColumnDefinitions=@Columns("Auto", "100", "100", "100", "100")
-          HorizontalAlignment="Center"
-          VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal">
+            <Image Source="Donut.jpg" MaxHeight="100" />
+            <Image Source="Donut.jpg" MaxHeight="50" VerticalAlignment="Bottom" />
+            <Image Source="Donut.jpg" MaxWidth="50" VerticalAlignment="Stretch" />
+            <Image Source="Donut.jpg" MaxWidth="50" MaxHeight="80" VerticalAlignment="Top" />
+            <Image Source="Donut.jpg" MaxWidth="80" MaxHeight="50" VerticalAlignment="Center" />
+        </StackPanel>
 
-        <TextBlock Row="0" Column="1" HorizontalAlignment="Center" Text="None" />
-        <TextBlock Row="0" Column="2" HorizontalAlignment="Center" Text="Fill" />
-        <TextBlock Row="0" Column="3" HorizontalAlignment="Center" Text="Uniform" />
-        <TextBlock Row="0" Column="4" HorizontalAlignment="Center" Text="UniformToFill" />
+        <Grid RowDefinitions=@Rows("Auto", "50", "50", "50", "50")
+              ColumnDefinitions=@Columns("Auto", "100", "100", "100", "100")
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
 
-        <TextBlock Row="1" Column="0" VerticalAlignment="Center" Text="Stretch" />
-        <TextBlock Row="2" Column="0" VerticalAlignment="Center" Text="Left/Top" />
-        <TextBlock Row="3" Column="0" VerticalAlignment="Center" Text="Center" />
-        <TextBlock Row="4" Column="0" VerticalAlignment="Center" Text="Right/Bottom" />
+            <TextBlock Row="0" Column="1" HorizontalAlignment="Center" Text="None" />
+            <TextBlock Row="0" Column="2" HorizontalAlignment="Center" Text="Fill" />
+            <TextBlock Row="0" Column="3" HorizontalAlignment="Center" Text="Uniform" />
+            <TextBlock Row="0" Column="4" HorizontalAlignment="Center" Text="UniformToFill" />
 
-        <Border Row="1" Column="1" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="None" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        </Border>
-        <Border Row="1" Column="2" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        </Border>
-        <Border Row="1" Column="3" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="Uniform" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        </Border>
-        <Border Row="1" Column="4" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        </Border>
+            <TextBlock Row="1" Column="0" VerticalAlignment="Center" Text="Stretch" />
+            <TextBlock Row="2" Column="0" VerticalAlignment="Center" Text="Left/Top" />
+            <TextBlock Row="3" Column="0" VerticalAlignment="Center" Text="Center" />
+            <TextBlock Row="4" Column="0" VerticalAlignment="Center" Text="Right/Bottom" />
 
-        <Border Row="2" Column="1" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        </Border>
-        <Border Row="2" Column="2" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="Fill" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        </Border>
-        <Border Row="2" Column="3" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        </Border>
-        <Border Row="2" Column="4" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        </Border>
+            <Border Row="1" Column="1" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="None" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Border>
+            <Border Row="1" Column="2" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Border>
+            <Border Row="1" Column="3" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="Uniform" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Border>
+            <Border Row="1" Column="4" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Border>
 
-        <Border Row="3" Column="1" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Border>
-        <Border Row="3" Column="2" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Border>
-        <Border Row="3" Column="3" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Border>
-        <Border Row="3" Column="4" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Border>
+            <Border Row="2" Column="1" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            </Border>
+            <Border Row="2" Column="2" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="Fill" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            </Border>
+            <Border Row="2" Column="3" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            </Border>
+            <Border Row="2" Column="4" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            </Border>
 
-        <Border Row="4" Column="1" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="None" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-        </Border>
-        <Border Row="4" Column="2" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="Fill" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-        </Border>
-        <Border Row="4" Column="3" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-        </Border>
-        <Border Row="4" Column="4" BorderThickness="1" BorderBrush="gray">
-            <Image Source="Donut.jpg" Stretch="UniformToFill" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-        </Border>
+            <Border Row="3" Column="1" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <Border Row="3" Column="2" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <Border Row="3" Column="3" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <Border Row="3" Column="4" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
 
-    </Grid>
+            <Border Row="4" Column="1" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="None" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+            </Border>
+            <Border Row="4" Column="2" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="Fill" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+            </Border>
+            <Border Row="4" Column="3" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+            </Border>
+            <Border Row="4" Column="4" BorderThickness="1" BorderBrush="gray">
+                <Image Source="Donut.jpg" Stretch="UniformToFill" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+            </Border>
 
+        </Grid>
+
+    </StackPanel>
 </XamzorView>

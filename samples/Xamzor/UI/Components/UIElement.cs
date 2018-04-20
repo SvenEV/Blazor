@@ -152,11 +152,11 @@ namespace Xamzor.UI.Components
             //       If only MaxWidth is set (but no Width) and HorizontalAlignment == Stretch,
             //       the MaxWidth is not exhausted. Instead the element will size to content.
 
-            // Here's an attempt at a workaround, but it breaks if MaxWidth exceed available width
-            if (!canStretchH && MaxWidth != double.PositiveInfinity)
-                sb.Append($"width: {MaxWidth}px; ");
-            if (!canStretchV && MaxHeight != double.PositiveInfinity)
-                sb.Append($"height: {MaxHeight}px; ");
+            // Here's an attempt at a workaround, but it breaks if MaxWidth exceeds available width
+            //if (!canStretchH && MaxWidth != double.PositiveInfinity)
+            //    sb.Append($"width: {MaxWidth}px; ");
+            //if (!canStretchV && MaxHeight != double.PositiveInfinity)
+            //    sb.Append($"height: {MaxHeight}px; ");
 
             sb.Append($"justify-self: {AlignmentToCss(HorizontalAlignment, canStretchH)}; ");
             sb.Append($"align-self: {AlignmentToCss(VerticalAlignment, canStretchV)}; ");
