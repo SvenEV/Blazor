@@ -8,7 +8,7 @@
 
     public ScrollMode HorizontalScrollMode { get; set; } = ScrollMode.Disabled;
 
-    public ScrollMode VerticalScrollMode { get; set; } = ScrollMode.Auto;
+    public ScrollMode VerticalScrollMode { get; set; } = ScrollMode.Enabled;
 
     private string StyleString =>
         $"overflow-x: {(HorizontalScrollMode == ScrollMode.Disabled ? "hidden" : HorizontalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};" +
