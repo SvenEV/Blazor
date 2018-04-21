@@ -1,7 +1,7 @@
 ﻿@inherits UIElement
 
-<div style="@LayoutCss">
-    <img class="Image" style="@InnerCss" src="@Source" onerror="this.style.display = 'none'" />
+<div xamzorid="@Id" id="@Id" class="Image" style="@LayoutCss">
+    <img style="@InnerCss" src="@Source" onerror="this.style.display = 'none'" />
 </div>
 
 @functions{

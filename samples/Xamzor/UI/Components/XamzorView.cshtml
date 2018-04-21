@@ -1,9 +1,8 @@
-﻿@using Microsoft.AspNetCore.Blazor.Browser.Interop
-@inherits UIElement
+﻿@inherits UIElement
 
 <div xamzorid="@Id" id="@Id" class="XamzorView" style="position: absolute; width: 100%; height: 100%; display: grid;">
     @ChildContent
-    <button onclick="@(e => View.VisualTree.Dump())" style="position: absolute; left: 0px; top: 64px; opacity: 0.4;">Hierarchy</button>
+    <button onclick="@(e => StateHasChanged())" style="position: absolute; left: 0px; top: 64px; opacity: 0.3;">Refresh</button>
 </div>
 
 @functions{
@@ -13,14 +12,7 @@
     protected override void OnInit()
     {
         base.OnInit();
-        Application.RegisterView(this);
         Owner?.OnXamzorViewInitialized(this);
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-        Application.UnregisterView(Id);
     }
     
     public interface IXamzorViewOwner

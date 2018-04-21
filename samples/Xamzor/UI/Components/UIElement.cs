@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Blazor;
+using Microsoft.AspNetCore.Blazor.Browser.Interop;
 using Microsoft.AspNetCore.Blazor.Components;
 using System;
 using System.Collections.Generic;
@@ -8,17 +9,9 @@ namespace Xamzor.UI.Components
 {
     public class UIElement : BlazorComponent, IDisposable
     {
-        private ApplicationView _view;
-
         public string LayoutCss { get; private set; }
 
         public string Id { get; }
-
-        public ApplicationView View
-        {
-            get => _view ?? throw new InvalidOperationException($"Not attached to a view ({this})");
-            private set => _view = value;
-        }
 
         public RenderFragment ChildContent { get; set; }
 
@@ -56,12 +49,6 @@ namespace Xamzor.UI.Components
         public int RowSpan { get; set; } = 1;
         public int ColumnSpan { get; set; } = 1;
 
-        private string AlignmentCss(Alignment alignment) =>
-            alignment == Alignment.Start ? "flex-start" :
-            alignment == Alignment.Center ? "center" :
-            alignment == Alignment.End ? "flex-end" :
-            "stretch";
-
         public UIElement()
         {
             Id = GetType().Name + "_" + Guid.NewGuid().ToString();
@@ -69,10 +56,8 @@ namespace Xamzor.UI.Components
 
         protected override void OnInit()
         {
-            if (!(this is XamzorView))
-                Application.RegisterElement(this);
-
-            UILog.Write("INIT", GetType().Name + " " + Tag + " initialized");
+            Application.RegisterElement(this);
+            UILog.Write("LIFECYCLE", GetType().Name + " " + Tag + " initialized");
         }
 
         protected override void OnParametersSet()
@@ -81,22 +66,12 @@ namespace Xamzor.UI.Components
             UpdateLayoutCss();
         }
 
-        public void AttachToView(ApplicationView view)
-        {
-            View = view;
-            StateHasChanged();
-        }
-
-        public void DetachFromView() => View = View;
-
         public override string ToString() => GetType().Name + " " + Tag;
 
         public virtual void Dispose()
         {
-            UILog.Write("DISPOSE", "Disposed " + this);
-
-            if (!(this is XamzorView))
-                Application.UnregisterElement(this);
+            UILog.Write("LIFECYCLE", "Disposed " + this);
+            Application.UnregisterElement(this);
         }
 
         private void UpdateLayoutCss()
@@ -105,8 +80,8 @@ namespace Xamzor.UI.Components
 
             ComputeOwnLayoutCss(sb);
 
-            var parent = _view?.VisualTree.Parent(this);
-            UILog.Write("DEBUG", $"({parent}).ComputeChildLayout({this})");
+            var parentId = RegisteredFunction.Invoke<string>("Xamzor.getParentComponent", Id);
+            var parent = Application.GetComponent(parentId);
             parent?.ComputeChildLayoutCss(sb, this);
 
             LayoutCss = sb.ToString();
@@ -115,7 +90,7 @@ namespace Xamzor.UI.Components
         protected virtual void ComputeOwnLayoutCss(StringBuilder sb)
         {
             sb.Append("display: grid; overflow: hidden; ");
-            
+
             if (!double.IsNaN(Width))
                 sb.Append($"width: {Width}px; ");
 
