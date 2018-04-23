@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xamzor.UI.Components;
 
 namespace Xamzor.UI
 {
@@ -21,6 +22,9 @@ namespace Xamzor.UI
         public const ImageStretch Fill = UI.ImageStretch.Fill;
         public const ImageStretch Uniform = UI.ImageStretch.Uniform;
         public const ImageStretch UniformToFill = UI.ImageStretch.UniformToFill;
+
+        // HACK
+        public static UIElement PARENT { get; set; }
 
         public static IReadOnlyList<RowDefinition> Rows(params string[] sizeStrings) =>
             sizeStrings.Select(s => new RowDefinition(GridLength.Parse(s))).ToList();

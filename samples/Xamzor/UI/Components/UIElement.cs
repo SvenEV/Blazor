@@ -1,20 +1,23 @@
 ﻿using Microsoft.AspNetCore.Blazor;
-using Microsoft.AspNetCore.Blazor.Browser.Interop;
 using Microsoft.AspNetCore.Blazor.Components;
+using Microsoft.AspNetCore.Blazor.RenderTree;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Xamzor.UI.Components
 {
     public class UIElement : BlazorComponent, IDisposable
     {
-        public string LayoutCss { get; private set; }
+        private bool _renderCount = false;
+
+        protected string LayoutCss { get; private set; }
+
+        protected string CssClass => GetType().Name + " " + (_renderCount ? "debug1" : "debug2");
 
         public string Id { get; }
 
         public RenderFragment ChildContent { get; set; }
-
+        
         public double Width { get; set; } = double.NaN;
 
         public double Height { get; set; } = double.NaN;
@@ -27,17 +30,14 @@ namespace Xamzor.UI.Components
 
         public double MaxHeight { get; set; } = double.PositiveInfinity;
 
-        public Point Size => new Point(Width, Height);
-
-        public Point MinSize => new Point(MinWidth, MinHeight);
-
-        public Point MaxSize => new Point(MaxWidth, MaxHeight);
-
         public Thickness Margin { get; set; } = Thickness.Zero;
 
         public Thickness Padding { get; set; } = Thickness.Zero;
 
         public string Tag { get; set; }
+
+        // HACK
+        public UIElement PARENT { get; set; }
 
         public Alignment HorizontalAlignment { get; set; } = Alignment.Stretch;
 
@@ -57,20 +57,24 @@ namespace Xamzor.UI.Components
         protected override void OnInit()
         {
             Application.RegisterElement(this);
-            UILog.Write("LIFECYCLE", GetType().Name + " " + Tag + " initialized");
+            UILog.Write("LIFECYCLE", $"Initialize '{this}'");
         }
 
-        protected override void OnParametersSet()
+        public override void SetParameters(ParameterCollection parameters)
         {
-            base.OnParametersSet();
+            // Assign to properties
+            base.SetParameters(parameters);
+
             UpdateLayoutCss();
+            UILog.Write("LIFECYCLE", $"SetParameters '{this}'");
+            UILog.Write("PARENT", $"Parent of '{this}' is '{PARENT}'");
         }
 
         public override string ToString() => GetType().Name + " " + Tag;
 
         public virtual void Dispose()
         {
-            UILog.Write("LIFECYCLE", "Disposed " + this);
+            UILog.Write("LIFECYCLE", $"Dispose '{this}'");
             Application.UnregisterElement(this);
         }
 
@@ -80,12 +84,20 @@ namespace Xamzor.UI.Components
 
             ComputeOwnLayoutCss(sb);
 
-            var parentId = RegisteredFunction.Invoke<string>("Xamzor.getParentComponent", Id);
-            var parent = Application.GetComponent(parentId);
-            parent?.ComputeChildLayoutCss(sb, this);
+            //var parentId = RegisteredFunction.Invoke<string>("Xamzor.getParentComponent", Id);
+            //var parent = Application.GetComponent(parentId);
+            PARENT?.ComputeChildLayoutCss(sb, this);
 
             LayoutCss = sb.ToString();
         }
+
+        protected RenderFragment ChildContentEx => builder =>
+        {
+            var temp = Helpers.PARENT;
+            Helpers.PARENT = this;
+            ChildContent?.Invoke(builder);
+            Helpers.PARENT = temp;
+        };
 
         protected virtual void ComputeOwnLayoutCss(StringBuilder sb)
         {
@@ -155,5 +167,12 @@ namespace Xamzor.UI.Components
 
         protected string ThicknessToCss(Thickness t) =>
             $"{t.Top}px {t.Right}px {t.Bottom}px {t.Left}px";
+
+        protected override void BuildRenderTree(RenderTreeBuilder builder)
+        {
+            base.BuildRenderTree(builder);
+            UILog.Write("LIFECYCLE", $"BuildRenderTree '{this}'");
+            _renderCount = !_renderCount;
+        }
     }
 }
