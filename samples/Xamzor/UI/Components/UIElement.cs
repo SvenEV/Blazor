@@ -8,11 +8,13 @@ namespace Xamzor.UI.Components
 {
     public class UIElement : BlazorComponent, IDisposable
     {
-        private bool _renderCount = false;
+        private bool _debugRenderCount = false;
 
         protected string LayoutCss { get; private set; }
 
-        protected string CssClass => GetType().Name + " " + (_renderCount ? "debug1" : "debug2");
+        protected string CssClass => Application.IsDebugOutlineEnabled
+            ? GetType().Name + " " + (_debugRenderCount ? "debug1" : "debug2")
+            : GetType().Name;
 
         public string Id { get; }
 
@@ -56,7 +58,6 @@ namespace Xamzor.UI.Components
 
         protected override void OnInit()
         {
-            Application.RegisterElement(this);
             UILog.Write("LIFECYCLE", $"Initialize '{this}'");
         }
 
@@ -65,9 +66,20 @@ namespace Xamzor.UI.Components
             // Assign to properties
             base.SetParameters(parameters);
 
+            // Inject helper code into ChildContent
+            if (ChildContent is RenderFragment originalChildContent)
+            {
+                ChildContent = builder =>
+                {
+                    var temp = Helpers.PARENT;
+                    Helpers.PARENT = this;
+                    originalChildContent?.Invoke(builder);
+                    Helpers.PARENT = temp;
+                };
+            }
+
             UpdateLayoutCss();
-            UILog.Write("LIFECYCLE", $"SetParameters '{this}'");
-            UILog.Write("PARENT", $"Parent of '{this}' is '{PARENT}'");
+            UILog.Write("LIFECYCLE", $"SetParameters '{this}' (parent is '{PARENT}')");
         }
 
         public override string ToString() => GetType().Name + " " + Tag;
@@ -75,29 +87,15 @@ namespace Xamzor.UI.Components
         public virtual void Dispose()
         {
             UILog.Write("LIFECYCLE", $"Dispose '{this}'");
-            Application.UnregisterElement(this);
         }
 
         private void UpdateLayoutCss()
         {
             var sb = new StringBuilder();
-
             ComputeOwnLayoutCss(sb);
-
-            //var parentId = RegisteredFunction.Invoke<string>("Xamzor.getParentComponent", Id);
-            //var parent = Application.GetComponent(parentId);
             PARENT?.ComputeChildLayoutCss(sb, this);
-
             LayoutCss = sb.ToString();
         }
-
-        protected RenderFragment ChildContentEx => builder =>
-        {
-            var temp = Helpers.PARENT;
-            Helpers.PARENT = this;
-            ChildContent?.Invoke(builder);
-            Helpers.PARENT = temp;
-        };
 
         protected virtual void ComputeOwnLayoutCss(StringBuilder sb)
         {
@@ -172,7 +170,7 @@ namespace Xamzor.UI.Components
         {
             base.BuildRenderTree(builder);
             UILog.Write("LIFECYCLE", $"BuildRenderTree '{this}'");
-            _renderCount = !_renderCount;
+            _debugRenderCount = !_debugRenderCount;
         }
     }
 }

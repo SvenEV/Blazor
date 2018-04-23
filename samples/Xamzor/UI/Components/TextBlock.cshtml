@@ -1,8 +1,6 @@
-﻿@using Microsoft.AspNetCore.Blazor.Browser.Interop
+﻿@inherits UIElement
 
-@inherits UIElement
-
-<div xamzorid="@Id" id="@Id" class="@CssClass" style="@LayoutCss @StyleString">@Text</div>
+<div id="@Id" class="@CssClass" style="@LayoutCss @StyleString">@Text</div>
 
 @functions{
 

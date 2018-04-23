@@ -1,7 +1,7 @@
 ﻿@inherits UIElement
 
-<div xamzorid="@Id" id="@Id" class="@CssClass" style="@LayoutCss @StyleString">
-    @ChildContentEx
+<div id="@Id" class="@CssClass" style="@LayoutCss">
+    @ChildContent
 </div>
 
 @functions{
@@ -10,13 +10,11 @@
 
     public ScrollMode VerticalScrollMode { get; set; } = ScrollMode.Enabled;
 
-    private string StyleString =>
-        $"overflow-x: {(HorizontalScrollMode == ScrollMode.Disabled ? "hidden" : HorizontalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};" +
-        $"overflow-y: {(VerticalScrollMode == ScrollMode.Disabled ? "hidden" : VerticalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")};";
-
     protected override void ComputeOwnLayoutCss(System.Text.StringBuilder sb)
     {
         base.ComputeOwnLayoutCss(sb);
         sb.Append("display: block; "); // Scrolling doesn't work with 'display: grid', revert to 'block'
+        sb.Append($"overflow-x: {(HorizontalScrollMode == ScrollMode.Disabled ? "hidden" : HorizontalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")}; ");
+        sb.Append($"overflow-y: {(VerticalScrollMode == ScrollMode.Disabled ? "hidden" : VerticalScrollMode == ScrollMode.Enabled ? "scroll" : "auto")}; ");
     }
 }

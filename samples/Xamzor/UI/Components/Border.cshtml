@@ -1,12 +1,12 @@
 ﻿@inherits UIElement
 
-<div xamzorid="@Id" id="@Id" class="@CssClass" style="@LayoutCss
+<div id="@Id" class="@CssClass" style="@LayoutCss
      background-color: @Background;
      border-color: @BorderBrush; border-style: solid;
      border-width: @(BorderThickness.Top)px @(BorderThickness.Right)px @(BorderThickness.Bottom)px @(BorderThickness.Left)px;
      border-radius: @(CornerRadius.Top)px @(CornerRadius.Right)px @(CornerRadius.Bottom)px @(CornerRadius.Left)px;">
 
-    @ChildContentEx
+    @ChildContent
 </div>
 
 @functions{

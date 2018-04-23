@@ -1,8 +1,8 @@
 ﻿@inherits UIElement
 
-<div xamzorid="@Id" id="@Id" class="@CssClass"
+<div id="@Id" class="@CssClass"
      style="position: absolute; width: 100%; height: 100%; display: grid;">
-    @ChildContentEx
+    @ChildContent
     <button onclick="@(e => StateHasChanged())" style="position: absolute; left: 0px; top: 64px; opacity: 0.3;">Refresh</button>
 </div>
 
